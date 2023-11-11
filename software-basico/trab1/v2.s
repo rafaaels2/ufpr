@@ -40,6 +40,21 @@ finalizaAlocador:
     # fim da funcao
     popq %rbp
     ret
+
+alocaMem:
+    # inicio da funcao
+    pushq %rbp
+    movq %rsp, %rbp
+    subq $40, %rsp
+
+    movq inicioHeap, %rax
+    movq topoHeap, %rbx
+    cmpq %rbx, %rax
+    jne fimIf
+
+    # fim da funcao
+    popq %rbp
+    ret
 #
 #
 #
@@ -83,6 +98,11 @@ main:
     # printf ("\n");
     movq $newLine, %rdi
     call printf
+
+    # alocaMem (10);
+    pushq $10
+    call alocaMem
+    addq $8 , % rsp
 
     #
     #

@@ -185,7 +185,7 @@ int main () {
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
     printf ("\n");
 
-    printf ("Aloca bloco TAM 10\n");
+    /* printf ("Aloca bloco TAM 10\n");
     a = alocaMem (10);
     printf ("# INICIO BLOCO A: %p\n", a);
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
@@ -231,7 +231,7 @@ int main () {
     printf ("Libera Bloco B\n");
     liberaMem (b);
     imprimeMapa ();
-    printf ("\n");
+    printf ("\n"); */
 
     finalizaAlocador ();
     
