@@ -109,12 +109,44 @@ void *alocaMem (long int num_bytes) {
     return atualHeap;
 }
 
+void fusaoNos () {
+    int contador;
+    long int *tamanho;
+    void *atualHeap, *antigaHeap;
+
+    atualHeap = inicioHeap;
+    contador = 0;
+
+    while (atualHeap != topoHeap) {
+        if (*((long int*) (atualHeap)) == 0) {
+            contador = contador + 1;
+
+            if (contador == 2) {
+                tamanho = antigaHeap + 8;
+                *tamanho = *((long int*) (atualHeap + 8)) + *((long int*) (antigaHeap + 8)) + 16;
+
+                contador = contador - 1;
+            }
+            else {
+                antigaHeap = atualHeap;
+            }
+        }
+        else {
+            contador = 0;
+        }
+
+        atualHeap = atualHeap + 16 + *((long int*) (atualHeap + 8));
+    }
+}
+
 int *liberaMem (void *bloco) {
     long int *ocupado;
 
     /* indica que o bloco está livre */
     ocupado = bloco;
     *ocupado = 0;
+
+    fusaoNos ();
 }
 
 void imprimeMapa () {
@@ -153,22 +185,17 @@ int main () {
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
     printf ("\n");
 
-    printf ("Aloca bloco TAM 50\n");
-    a = alocaMem (50);
+    printf ("Aloca bloco TAM 10\n");
+    a = alocaMem (10);
     printf ("# INICIO BLOCO A: %p\n", a);
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
     imprimeMapa ();
     printf ("\n");
     
-    printf ("Aloca bloco TAM 5\n");
-    b = alocaMem (5);
+    printf ("Aloca bloco TAM 10\n");
+    b = alocaMem (10);
     printf ("# INICIO BLOCO B: %p\n", b);
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
-    imprimeMapa ();
-    printf ("\n");
-
-    printf ("Libera bloco TAM A\n");
-    liberaMem (a);
     imprimeMapa ();
     printf ("\n");
 
@@ -178,23 +205,31 @@ int main () {
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
     imprimeMapa ();
     printf ("\n");
-    
-    printf ("Aloca bloco TAM 8\n");
-    d = alocaMem (8);
-    printf ("# INICIO BLOCO D: %p\n", d);
+
+    printf ("Aloca bloco TAM 10\n");
+    d = alocaMem (10);
+    printf ("# INICIO BLOCO C: %p\n", d);
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
     imprimeMapa ();
     printf ("\n");
 
-    printf ("Libera bloco TAM D\n");
+    printf ("Libera Bloco A\n");
+    liberaMem (a);
+    imprimeMapa ();
+    printf ("\n");
+
+    printf ("Libera Bloco C\n");
+    liberaMem (c);
+    imprimeMapa ();
+    printf ("\n");
+
+    printf ("Libera Bloco D\n");
     liberaMem (d);
     imprimeMapa ();
     printf ("\n");
 
-    printf ("Aloca bloco TAM 25\n");
-    e = alocaMem (25);
-    printf ("# INICIO BLOCO D: %p\n", e);
-    printf ("# TOPO DA HEAP:   %p\n", topoHeap);
+    printf ("Libera Bloco B\n");
+    liberaMem (b);
     imprimeMapa ();
     printf ("\n");
 
