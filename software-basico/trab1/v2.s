@@ -5,6 +5,8 @@
     printManipulando: .string "Manipulando a Heap\n"
     printInicio: .string "# INICIO DA HEAP: %p\n"
     printTopo: .string "# TOPO DA HEAP:   %p\n"
+    testeInt: .string "# NUMBER:         %ld\n"
+    testeEnd: .string "# ENDEREÇO:       %p\n"
     newLine: .string "\n"
 .section .text
 .globl main
@@ -41,20 +43,62 @@ finalizaAlocador:
     popq %rbp
     ret
 
+# -8(%rbp)  = long int *ocupado
+# -16(%rbp)  = long int *tamanho
+# -24(%rbp) = void *bloco
+# -32(%rbp) = void *atualHeap
+# -40(%rbp) = long int dif
+
 alocaMem:
     # inicio da funcao
     pushq %rbp
     movq %rsp, %rbp
     subq $40, %rsp
 
+    # inicioHead e topoHead em resgistradores
     movq inicioHeap, %rax
     movq topoHeap, %rbx
-    cmpq %rbx, %rax
-    jne fimIf
 
+    # if (inicioHeap == topoHeap)
+    cmpq %rbx, %rax
+    # jne end_if
+
+    # brk(inicioHeap + (16 + num_bytes));
+    addq $16, %rdi
+    addq %rax, %rdi
+    movq $12, %rax
+    syscall
+    movq %rax, topoHeap
+
+    # printf ("# TOPO DA HEAP:   %p\n", topoHeap);
+    movq $printTopo, %rdi
+    movq %rax, %rsi
+    call printf
+
+    # ocupado = inicioHeap;
+    movq inicioHeap, %rax
+    movq %rax, -8(%rbp)
+
+    # *ocupado = 1;
+    movq $1, (%rax)
+
+    # tamanho = inicioHeap + 8;
+    movq inicioHeap, %rax
+    addq $8, %rax
+    movq %rax, -16(%rbp)
+
+    # *tamanho = num_bytes;
+    movq 16(%rbp), %rbx
+    movq %rbx, (%rax)
+
+    # return inicioHeap;
+    jmp fimAloca
+
+fimAloca:
     # fim da funcao
+    addq $40, %rsp
     popq %rbp
-    ret
+    ret 
 #
 #
 #
@@ -64,6 +108,7 @@ alocaMem:
 #
 #
 #
+
 main:
     #
     #
@@ -100,9 +145,10 @@ main:
     call printf
 
     # alocaMem (10);
-    pushq $10
+    movq $10, %rdi
+    pushq %rdi
     call alocaMem
-    addq $8 , % rsp
+    popq %rdi
 
     #
     #
@@ -119,6 +165,7 @@ main:
     #
 
     # finalizaAlocador ();
+    # printf ("\n");
     call finalizaAlocador
 
     # return 0;
