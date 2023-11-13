@@ -8,6 +8,9 @@
     testeInt: .string "# NUMBER:         %ld\n"
     testeEnd: .string "# ENDEREÇO:       %p\n"
     newLine: .string "\n"
+    infoGerenciais: .string "################"
+    ocupado: .string "+"
+    desocupado: .string "-"
 .section .text
 .globl main
 
@@ -90,7 +93,7 @@ alocaMem:
     movq inicioHeap, %rax
     movq %rax, -32(%rbp)
 
-    # return inicioHeap;
+    # return atualHeap;
     jmp fimAlocaMem
 
 notIf:
@@ -98,25 +101,28 @@ notIf:
     movq inicioHeap, %rax
     movq %rax, -32(%rbp)
 
-    # inicioHeap e topoHeap em resgistradores
-    movq inicioHeap, %rax
+    jmp whileAloca
+
+whileAloca:
+    # atualHeap e topoHeap em resgistradores
+    movq -32(%rbp), %rax
     movq topoHeap, %rbx
 
     # while (atualHeap != topoHeap)
     cmpq %rax, %rbx
-    ### je fim_while
+    je notWhile
 
     # if (*((long int*) (atualHeap)) != 1)
     movq -32(%rbp), %rax
     cmpq $1, (%rax)
-    ### je if_ocupado
+    je alocaIf
 
     # if (*((long int*) (atualHeap + 8)) >= num_bytes)
     movq -32(%rbp), %rax
     addq $8, %rax
     movq 16(%rbp), %rbx
     cmpq %rbx, (%rax)
-    ### jl if_tamBloco
+    jl alocaIf
 
     # ocupado = atualHeap;
     movq -32(%rbp), %rax
@@ -135,7 +141,7 @@ notIf:
 
     # if (dif > 16)
     cmpq $16, -40(%rbp)
-    ### jle if_tamBytes
+    jle fimAlocaMem
 
     # tamanho = atualHeap + 8;
     movq -32(%rbp), %rax
@@ -166,12 +172,166 @@ notIf:
     movq -40(%rbp), %rbx
     movq %rbx, (%rax)
 
+    # return atualHeap;
+    jmp fimAlocaMem
+
+alocaIf:
+    # atualHeap = atualHeap + 16 + *((long int*) (atualHeap + 8));
+    movq -32(%rbp), %rbx
+    addq $8, %rbx
+    movq (%rbx), %rbx
+    movq -32(%rbp), %rax
+    addq $16, %rax
+    addq %rbx, %rax
+    movq %rax, -32(%rbp)
+
+    jmp whileAloca
+
+notWhile:
+    # brk(inicioHeap + (16 + num_bytes));
+    addq $16, %rdi
+    addq %rax, %rdi
+    movq $12, %rax
+    syscall
+    movq %rax, topoHeap
+
+    # ocupado = atualHeap;
+    movq -32(%rbp), %rax
+    movq %rax, -8(%rbp)
+
+    # *ocupado = 1;
+    movq $1, (%rax)
+
+    # tamanho = atualHeap + 8;
+    movq -32(%rbp), %rax
+    addq $8, %rax
+    movq %rax, -16(%rbp)
+
+    # *tamanho = num_bytes;
+    movq 16(%rbp), %rbx
+    movq %rbx, (%rax)
+
+    # return atualHeap;
+    jmp fimAlocaMem
+
 fimAlocaMem:
     # fim da funcao
     movq -32(%rbp), %rax
     addq $40, %rsp
     popq %rbp
     ret 
+
+# -8(%rbp)   = long int *atualHeap
+liberaMem:
+    # inicio da funcao
+    pushq %rbp
+    movq %rsp, %rbp
+    subq $8, %rsp
+
+    # ocupado = bloco;
+    movq 16(%rbp), %rax
+    movq %rax, -8(%rbp)
+
+    # *ocupado = 0;
+    movq $0, (%rax)
+
+    # fim da funcao
+    addq $8, %rsp
+    popq %rbp
+    ret 
+
+# -8(%rbp)   = void *atualHeap
+imprimeMapa:
+    # inicio da funcao
+    pushq %rbp
+    movq %rsp, %rbp
+    subq $8, %rsp
+
+    # atualHeap = inicioHeap;
+    movq inicioHeap, %rax
+    movq %rax, -8(%rbp)
+
+    jmp whileImprime
+
+whileImprime:
+    # atualHeap e topoHeap em resgistradores
+    movq -8(%rbp), %rax
+    movq topoHeap, %rbx
+
+    # while (atualHeap != topoHeap)
+    cmpq %rax, %rbx
+    je fimImprimeMapa
+
+    # printf ("################");
+    movq $infoGerenciais, %rdi
+    call printf
+
+    # int i = 0;
+    movq $0, %r8  
+
+    # if (*((long int*) (atualHeap)) == 1)
+    movq -8(%rbp), %rax
+    cmpq $1, (%rax)
+    jne forDesocupado       
+
+    jmp forOcupado
+
+forOcupado:
+    # rax = atualHeap + 8
+    movq -8(%rbp), %rax     
+    addq $8, %rax           
+
+    # i < *((long int*) (atualHeap + 8))
+    cmpq %r8, (%rax)
+    jle imprimeIF
+
+    # printf ("+");
+    movq $ocupado, %rdi
+    call printf
+
+    # i++
+    addq $1, %r8
+    jmp forOcupado
+
+forDesocupado:
+    # rax = atualHeap + 8
+    movq -8(%rbp), %rax     
+    addq $8, %rax 
+
+    # i < *((long int*) (atualHeap + 8))
+    cmpq %r8, (%rax)
+    jle imprimeIF
+
+    # printf ("+");
+    movq $desocupado, %rdi
+    call printf
+
+    # i++
+    addq $1, %r8
+    jmp forDesocupado
+
+imprimeIF:
+    # atualHeap = atualHeap + 16 + *((long int*) (atualHeap + 8));
+    movq -8(%rbp), %rbx
+    addq $8, %rbx
+    movq (%rbx), %rbx
+    movq -8(%rbp), %rax
+    addq $16, %rax
+    addq %rbx, %rax
+    movq %rax, -8(%rbp)
+
+    jmp whileImprime
+
+fimImprimeMapa:
+    # printf ("\n");
+    movq $newLine, %rdi
+    call printf
+
+    # fim da funcao
+    addq $8, %rsp
+    popq %rbp
+    ret 
+
 #
 #
 #
@@ -218,9 +378,17 @@ main:
     call printf
 
     # alocaMem (10);
-    movq $50, %rdi
+    movq $10, %rdi
     pushq %rdi
     call alocaMem
+    popq %rdi
+
+    # a = alocaMem (10)
+    movq %rax, -8(%rbp)
+
+    # imprimeMapa ()
+    pushq %rdi
+    call imprimeMapa
     popq %rdi
 
     # alocaMem (10);
@@ -228,6 +396,37 @@ main:
     pushq %rdi
     call alocaMem
     popq %rdi
+
+    # b = alocaMem (10)
+    movq %rax, -16(%rbp)
+
+    # imprimeMapa ()
+    pushq %rdi
+    call imprimeMapa
+    popq %rdi
+
+    # libera bloco b
+    movq -16(%rbp), %rdi
+    pushq %rdi
+    call liberaMem
+    popq %rdi
+
+    # imprimeMapa ()
+    pushq %rdi
+    call imprimeMapa
+    popq %rdi
+
+    # libera bloco a
+    movq -8(%rbp), %rdi
+    pushq %rdi
+    call liberaMem
+    popq %rdi
+
+    # imprimeMapa ()
+    pushq %rdi
+    call imprimeMapa
+    popq %rdi
+
 
     #
     #
