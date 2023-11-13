@@ -235,6 +235,9 @@ liberaMem:
     # *ocupado = 0;
     movq $0, (%rax)
 
+    # fusaoNos ();
+    call fusaoNos
+
     # fim da funcao
     addq $8, %rsp
     popq %rbp
@@ -332,6 +335,99 @@ fimImprimeMapa:
     popq %rbp
     ret 
 
+# -8(%rbp)  = long int contador
+# -16(%rbp) = long int *tamanho
+# -24(%rbp) = void *atualHeap
+# -32(%rbp) = void *antigaHeap
+fusaoNos:
+    # inicio da funcao
+    pushq %rbp
+    movq %rsp, %rbp
+    subq $32, %rsp
+
+    # atualHeap = inicioHeap;
+    movq inicioHeap, %rax
+    movq %rax, -24(%rbp)
+
+    # contador = 0;
+    movq $0, -8(%rbp)
+
+    jmp whileFusaoNos
+
+whileFusaoNos:
+    # atualHeap e topoHeap em resgistradores
+    movq -24(%rbp), %rax
+    movq topoHeap, %rbx
+
+    # while (atualHeap != topoHeap)
+    cmpq %rax, %rbx
+    je fimFusaoNos
+
+    # if (*((long int*) (atualHeap)) == 0)
+    movq -24(%rbp), %rax
+    cmpq $0, (%rax)
+    jne fusaoELSE
+
+    # contador = contador + 1;
+    addq $1, -8(%rbp)
+
+    # if (contador == 2)
+    cmpq $2, -8(%rbp)
+    jne contadorELSE
+
+    # tamanho = antigaHeap + 8;
+    movq -32(%rbp), %rax
+    addq $8, %rax
+    movq %rax, -16(%rbp)
+
+    # *tamanho = *((long int*) (atualHeap + 8)) + *((long int*) (antigaHeap + 8)) + 16;
+    movq -24(%rbp), %rbx    # rbx = atualHeap
+    addq $8, %rbx           # rbx = atualHeap + 8
+    movq -32(%rbp), %rcx    # rcx = antigaHeap
+    addq $8, %rcx           # rcx = antigaHeap + 8
+    movq (%rbx), %rbx       # rbx = TAM atualHeap
+    movq (%rcx), %rcx       # rcx = TAM antigaHeap
+    addq %rcx, %rbx         # rbx = TAM atualHeap + TAM antigaHeap
+    addq $16, %rbx          # rbx = TAM atualHeap + TAM antigaHeap + 16
+    movq %rbx, (%rax)       # *tamanho = rbx
+
+    # contador = contador - 1;
+    subq $1, -8(%rbp)  
+
+    jmp fusaoIF
+
+fusaoELSE:
+    # contador = 0;
+    movq $0, -8(%rbp)
+
+    jmp fusaoIF
+
+contadorELSE:
+    # antigaHeap = atualHeap;
+    movq -24(%rbp), %rax
+    movq %rax, -32(%rbp)
+
+    jmp fusaoIF
+
+fusaoIF:
+    # atualHeap = atualHeap + 16 + *((long int*) (atualHeap + 8));
+    movq -24(%rbp), %rbx
+    addq $8, %rbx
+    movq (%rbx), %rbx
+    movq -24(%rbp), %rax
+    addq $16, %rax
+    addq %rbx, %rax
+    movq %rax, -24(%rbp)
+
+    jmp whileFusaoNos
+
+
+fimFusaoNos:
+    # fim da funcao
+    addq $32, %rsp
+    popq %rbp
+    ret 
+
 #
 #
 #
@@ -384,7 +480,7 @@ main:
     popq %rdi
 
     # a = alocaMem (10)
-    movq %rax, -8(%rbp)
+    movq %rax, -8(%rbp) 
 
     # imprimeMapa ()
     pushq %rdi
@@ -398,25 +494,14 @@ main:
     popq %rdi
 
     # b = alocaMem (10)
-    movq %rax, -16(%rbp)
+    movq %rax, -16(%rbp) 
 
     # imprimeMapa ()
     pushq %rdi
     call imprimeMapa
     popq %rdi
 
-    # libera bloco b
-    movq -16(%rbp), %rdi
-    pushq %rdi
-    call liberaMem
-    popq %rdi
-
-    # imprimeMapa ()
-    pushq %rdi
-    call imprimeMapa
-    popq %rdi
-
-    # libera bloco a
+    # libera bloco b    
     movq -8(%rbp), %rdi
     pushq %rdi
     call liberaMem
@@ -427,23 +512,18 @@ main:
     call imprimeMapa
     popq %rdi
 
+    # libera bloco b    
+    movq -16(%rbp), %rdi
+    pushq %rdi
+    call liberaMem
+    popq %rdi
 
-    #
-    #
-    #
-    #
-    #
-    #
-    # ----------------------------------------------- PRINTS E CHAMADAS DE FUNCAO NA MAIN AQUI -----------------------------------------------
-    #
-    #
-    #
-    #
-    #
-    #
+    # imprimeMapa ()
+    pushq %rdi
+    call imprimeMapa
+    popq %rdi
 
     # finalizaAlocador ();
-    # printf ("\n");
     call finalizaAlocador
 
     # return 0;

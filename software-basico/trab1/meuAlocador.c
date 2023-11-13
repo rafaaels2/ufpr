@@ -112,7 +112,7 @@ void *alocaMem (long int num_bytes) {
 }
 
 void fusaoNos () {
-    int contador;
+    long int contador;
     long int *tamanho;
     void *atualHeap, *antigaHeap;
 
