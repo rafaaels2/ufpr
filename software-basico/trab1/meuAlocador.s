@@ -44,7 +44,7 @@ finalizaAlocador:
     ret
 
 # -8(%rbp)  = long int *ocupado
-# -16(%rbp)  = long int *tamanho
+# -16(%rbp) = long int *tamanho
 # -24(%rbp) = void *bloco
 # -32(%rbp) = void *atualHeap
 # -40(%rbp) = long int dif
@@ -55,13 +55,13 @@ alocaMem:
     movq %rsp, %rbp
     subq $40, %rsp
 
-    # inicioHead e topoHead em resgistradores
+    # inicioHeap e topoHeap em resgistradores
     movq inicioHeap, %rax
     movq topoHeap, %rbx
 
     # if (inicioHeap == topoHeap)
     cmpq %rbx, %rax
-    # jne end_if
+    jne notIf
 
     # brk(inicioHeap + (16 + num_bytes));
     addq $16, %rdi
@@ -69,11 +69,6 @@ alocaMem:
     movq $12, %rax
     syscall
     movq %rax, topoHeap
-
-    # printf ("# TOPO DA HEAP:   %p\n", topoHeap);
-    movq $printTopo, %rdi
-    movq %rax, %rsi
-    call printf
 
     # ocupado = inicioHeap;
     movq inicioHeap, %rax
@@ -91,11 +86,89 @@ alocaMem:
     movq 16(%rbp), %rbx
     movq %rbx, (%rax)
 
-    # return inicioHeap;
-    jmp fimAloca
+    # atualHeap = inicioHeap;
+    movq inicioHeap, %rax
+    movq %rax, -32(%rbp)
 
-fimAloca:
+    # return inicioHeap;
+    jmp fimAlocaMem
+
+notIf:
+    # atualHeap = inicioHeap;
+    movq inicioHeap, %rax
+    movq %rax, -32(%rbp)
+
+    # inicioHeap e topoHeap em resgistradores
+    movq inicioHeap, %rax
+    movq topoHeap, %rbx
+
+    # while (atualHeap != topoHeap)
+    cmpq %rax, %rbx
+    ### je fim_while
+
+    # if (*((long int*) (atualHeap)) != 1)
+    movq -32(%rbp), %rax
+    cmpq $1, (%rax)
+    ### je if_ocupado
+
+    # if (*((long int*) (atualHeap + 8)) >= num_bytes)
+    movq -32(%rbp), %rax
+    addq $8, %rax
+    movq 16(%rbp), %rbx
+    cmpq %rbx, (%rax)
+    ### jl if_tamBloco
+
+    # ocupado = atualHeap;
+    movq -32(%rbp), %rax
+    movq %rax, -8(%rbp)
+
+    # *ocupado = 1;
+    movq $1, (%rax)
+
+    # dif = *((long int*) (atualHeap + 8)) - num_bytes;
+    movq -32(%rbp), %rax    # atualHeap    = rax
+    addq $8, %rax           # atualHeap    = atualHeap + 8
+    movq (%rax), %rbx       # (%atualHeap) = rbx 
+    movq %rbx, -40(%rbp)    # rbx          = dif
+    movq 16(%rbp), %rcx     # num_bytes    = rcx
+    subq %rcx, -40(%rbp)    # dif          = dif - rcx
+
+    # if (dif > 16)
+    cmpq $16, -40(%rbp)
+    ### jle if_tamBytes
+
+    # tamanho = atualHeap + 8;
+    movq -32(%rbp), %rax
+    addq $8, %rax
+    movq %rax, -16(%rbp)
+
+    # *tamanho = num_bytes;
+    movq 16(%rbp), %rbx
+    movq %rbx, (%rax)
+
+    # ocupado = atualHeap + 16 + num_bytes;
+    movq -32(%rbp), %rax
+    addq $16, %rax
+    addq 16(%rbp), %rax
+    movq %rax, -8(%rbp)
+
+    # *ocupado = 0;
+    movq $0, (%rax)
+
+    # tamanho = atualHeap + 24 + num_bytes;
+    movq -32(%rbp), %rax
+    addq $24, %rax
+    addq 16(%rbp), %rax
+    movq %rax, -8(%rbp)
+
+    # *tamanho = dif - 16;
+    subq $16, -40(%rbp)
+    movq -40(%rbp), %rbx
+    movq %rbx, (%rax)
+
+fimAlocaMem:
     # fim da funcao
+    movq -32(%rbp), %rax
     addq $40, %rsp
     popq %rbp
     ret 
@@ -143,6 +216,12 @@ main:
     # printf ("\n");
     movq $newLine, %rdi
     call printf
+
+    # alocaMem (10);
+    movq $50, %rdi
+    pushq %rdi
+    call alocaMem
+    popq %rdi
 
     # alocaMem (10);
     movq $10, %rdi

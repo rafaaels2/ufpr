@@ -40,7 +40,9 @@ void *alocaMem (long int num_bytes) {
         /* atualiza topo da heap */
         topoHeap = sbrk(0);
 
-        return inicioHeap;
+        atualHeap = inicioHeap;
+
+        return atualHeap;
     }
     
     atualHeap = inicioHeap;
@@ -185,7 +187,7 @@ int main () {
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
     printf ("\n");
 
-    /* printf ("Aloca bloco TAM 10\n");
+    printf ("Aloca bloco TAM 10\n");
     a = alocaMem (10);
     printf ("# INICIO BLOCO A: %p\n", a);
     printf ("# TOPO DA HEAP:   %p\n", topoHeap);
@@ -206,32 +208,20 @@ int main () {
     imprimeMapa ();
     printf ("\n");
 
-    printf ("Aloca bloco TAM 10\n");
-    d = alocaMem (10);
-    printf ("# INICIO BLOCO C: %p\n", d);
-    printf ("# TOPO DA HEAP:   %p\n", topoHeap);
-    imprimeMapa ();
-    printf ("\n");
-
     printf ("Libera Bloco A\n");
-    liberaMem (a);
-    imprimeMapa ();
-    printf ("\n");
-
-    printf ("Libera Bloco C\n");
     liberaMem (c);
     imprimeMapa ();
     printf ("\n");
 
-    printf ("Libera Bloco D\n");
-    liberaMem (d);
+    printf ("Libera Bloco C\n");
+    liberaMem (b);
     imprimeMapa ();
     printf ("\n");
 
-    printf ("Libera Bloco B\n");
-    liberaMem (b);
+    printf ("Libera Bloco D\n");
+    liberaMem (a);
     imprimeMapa ();
-    printf ("\n"); */
+    printf ("\n");
 
     finalizaAlocador ();
     
