@@ -12,7 +12,11 @@
     ocupado: .string "+"
     desocupado: .string "-"
 .section .text
-.globl main
+.globl iniciaAlocador
+.globl finalizaAlocador
+.globl alocaMem
+.globl liberaMem
+.globl imprimeMapa
 
 iniciaAlocador:
     # inicio da funcao
@@ -51,12 +55,14 @@ finalizaAlocador:
 # -24(%rbp) = void *bloco
 # -32(%rbp) = void *atualHeap
 # -40(%rbp) = long int dif
+# -48(%rbp) = int num_bytes
 
 alocaMem:
     # inicio da funcao
     pushq %rbp
     movq %rsp, %rbp
-    subq $40, %rsp
+    subq $48, %rsp
+    movq %rdi, -48(%rbp)
 
     # inicioHeap e topoHeap em resgistradores
     movq inicioHeap, %rax
@@ -86,7 +92,7 @@ alocaMem:
     movq %rax, -16(%rbp)
 
     # *tamanho = num_bytes;
-    movq 16(%rbp), %rbx
+    movq -48(%rbp), %rbx
     movq %rbx, (%rax)
 
     # atualHeap = inicioHeap;
@@ -120,7 +126,7 @@ whileAloca:
     # if (*((long int*) (atualHeap + 8)) >= num_bytes)
     movq -32(%rbp), %rax
     addq $8, %rax
-    movq 16(%rbp), %rbx
+    movq -48(%rbp), %rbx
     cmpq %rbx, (%rax)
     jl alocaIf
 
@@ -136,7 +142,7 @@ whileAloca:
     addq $8, %rax           # atualHeap    = atualHeap + 8
     movq (%rax), %rbx       # (%atualHeap) = rbx 
     movq %rbx, -40(%rbp)    # rbx          = dif
-    movq 16(%rbp), %rcx     # num_bytes    = rcx
+    movq -48(%rbp), %rcx     # num_bytes    = rcx
     subq %rcx, -40(%rbp)    # dif          = dif - rcx
 
     # if (dif > 16)
@@ -149,13 +155,13 @@ whileAloca:
     movq %rax, -16(%rbp)
 
     # *tamanho = num_bytes;
-    movq 16(%rbp), %rbx
+    movq -48(%rbp), %rbx
     movq %rbx, (%rax)
 
     # ocupado = atualHeap + 16 + num_bytes;
     movq -32(%rbp), %rax
     addq $16, %rax
-    addq 16(%rbp), %rax
+    addq -48(%rbp), %rax
     movq %rax, -8(%rbp)
 
     # *ocupado = 0;
@@ -164,7 +170,7 @@ whileAloca:
     # tamanho = atualHeap + 24 + num_bytes;
     movq -32(%rbp), %rax
     addq $24, %rax
-    addq 16(%rbp), %rax
+    addq -48(%rbp), %rax
     movq %rax, -8(%rbp)
 
     # *tamanho = dif - 16;
@@ -208,7 +214,7 @@ notWhile:
     movq %rax, -16(%rbp)
 
     # *tamanho = num_bytes;
-    movq 16(%rbp), %rbx
+    movq -48(%rbp), %rbx
     movq %rbx, (%rax)
 
     # return atualHeap;
@@ -217,19 +223,21 @@ notWhile:
 fimAlocaMem:
     # fim da funcao
     movq -32(%rbp), %rax
-    addq $40, %rsp
+    addq $48, %rsp
     popq %rbp
     ret 
 
 # -8(%rbp)   = long int *atualHeap
+# -16(%rbp)  = void* bloco
 liberaMem:
     # inicio da funcao
     pushq %rbp
     movq %rsp, %rbp
-    subq $8, %rsp
+    subq $16, %rsp
+    movq %rdi, -16(%rbp)
 
     # ocupado = bloco;
-    movq 16(%rbp), %rax
+    movq -16(%rbp), %rax
     movq %rax, -8(%rbp)
 
     # *ocupado = 0;
@@ -239,7 +247,7 @@ liberaMem:
     call fusaoNos
 
     # fim da funcao
-    addq $8, %rsp
+    addq $16, %rsp
     popq %rbp
     ret 
 
@@ -248,7 +256,7 @@ imprimeMapa:
     # inicio da funcao
     pushq %rbp
     movq %rsp, %rbp
-    subq $8, %rsp
+    subq $16, %rsp
 
     # atualHeap = inicioHeap;
     movq inicioHeap, %rax
@@ -270,12 +278,12 @@ whileImprime:
     call printf
 
     # int i = 0;
-    movq $0, %r8  
+    movq $0, %r8
 
     # if (*((long int*) (atualHeap)) == 1)
     movq -8(%rbp), %rax
     cmpq $1, (%rax)
-    jne forDesocupado       
+    jne forDesocupado
 
     jmp forOcupado
 
@@ -331,7 +339,7 @@ fimImprimeMapa:
     call printf
 
     # fim da funcao
-    addq $8, %rsp
+    addq $16, %rsp
     popq %rbp
     ret 
 
@@ -437,7 +445,7 @@ fimFusaoNos:
 #
 #
 #
-
+/*
 main:
     #
     #
@@ -450,7 +458,7 @@ main:
     movq %rsp, %rbp
 
     # void *a, *b;
-    subq $16, %rsp
+    subq $32, %rsp
 
     # printf ("Manipulando a Heap\n");
     movq $printManipulando, %rdi
@@ -501,8 +509,33 @@ main:
     call imprimeMapa
     popq %rdi
 
-    # libera bloco b    
+    # alocaMem (10);
+    movq $10, %rdi
+    pushq %rdi
+    call alocaMem
+    popq %rdi
+
+    # c = alocaMem (10)
+    movq %rax, -24(%rbp) 
+
+    # imprimeMapa ()
+    pushq %rdi
+    call imprimeMapa
+    popq %rdi
+
+    # libera bloco a    
     movq -8(%rbp), %rdi
+    pushq %rdi
+    call liberaMem
+    popq %rdi
+
+    # imprimeMapa ()
+    pushq %rdi
+    call imprimeMapa
+    popq %rdi
+
+    # libera bloco c    
+    movq -24(%rbp), %rdi
     pushq %rdi
     call liberaMem
     popq %rdi
@@ -523,10 +556,32 @@ main:
     call imprimeMapa
     popq %rdi
 
+    # alocaMem (10);
+    movq $20, %rdi
+    pushq %rdi
+    call alocaMem
+    popq %rdi
+
+    # c = alocaMem (10)
+    movq %rax, -24(%rbp) 
+
+    # imprimeMapa ()
+    pushq %rdi
+    call imprimeMapa
+    popq %rdi
+
+    # printf ("# TOPO DA HEAP:   %p\n", topoHeap);
+    movq $printTopo, %rdi
+    movq topoHeap, %rsi
+    call printf
+
     # finalizaAlocador ();
     call finalizaAlocador
+
+    # void *a, *b;
+    subq $32, %rsp
 
     # return 0;
     movq $60, %rax
     movq $0, %rdi
-    syscall
+    syscall  */
