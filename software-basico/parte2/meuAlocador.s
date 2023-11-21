@@ -178,8 +178,8 @@ notWhile:
     # *ocupado = 1;
     movq $1, (%rax)
 
-    # dif = *((long int*) (maioHeap + 8)) - num_bytes;
-    movq -64(%rbp), %rax    # maioHeap     = rax
+    # dif = *((long int*) (maiorHeap + 8)) - num_bytes;
+    movq -64(%rbp), %rax    # maiorHeap    = rax
     addq $8, %rax           # maiorHeap    = maiorHeap + 8
     movq (%rax), %rbx       # (%maiorHeap) = rbx 
     movq %rbx, -40(%rbp)    # rbx          = dif
@@ -188,6 +188,8 @@ notWhile:
 
     # if (dif > 16)
     cmpq $16, -40(%rbp)
+    movq -64(%rbp), %rax
+    movq %rax, -32(%rbp)
     jle fimAlocaMem
 
     # tamanho = maiorHeap + 8;
