@@ -34,7 +34,7 @@ void queue_print (char *name, queue_t *queue, void print_elem (void*)) {
     print_elem (queue);
 
     // percorre toda fila até chegar no elemento que possui o next sendo o inicio da fila (ultimo elemento)
-    while (aux->next != queue) {
+    while (queue != NULL && aux->next != queue) {
         printf (" ");
 
         aux = aux->next;
@@ -152,22 +152,30 @@ int queue_remove (queue_t **queue, queue_t *elem) {
 
     // -------------------------------------------------------- //
 
-    // se remover o primeiro altera o inicio da fila
-    if (elem == *queue) {
-        *queue = elem->next;
+    // se for uma fila unitaria
+    if (queue_size (*queue) == 1) {
+        *queue = NULL;
     }
 
-    // aux = prev do elemento
-    aux = elem->prev;
+    // se não for uma fila unitaria
+    else {
+        // se remover o primeiro altera o inicio da fila
+        if (elem == *queue) {
+            *queue = elem->next;
+        }
 
-    // next do prev do elemento eh o next do elemento
-    aux->next = elem->next;
+        // aux = prev do elemento
+        aux = elem->prev;
 
-    // aux = next do elemento
-    aux = elem->next;
-    
-    // prev do next do elemento eh o prev do elemento
-    aux->prev = elem->prev;
+        // next do prev do elemento eh o next do elemento
+        aux->next = elem->next;
+
+        // aux = next do elemento
+        aux = elem->next;
+        
+        // prev do next do elemento eh o prev do elemento
+        aux->prev = elem->prev;
+    }
 
     // tira o elemento da fila
     elem->prev = NULL;
