@@ -111,7 +111,7 @@ int queue_contains (queue_t **queue, queue_t *elem) {
 
     // percorre toda fila até chegar no elemento que possui o next sendo o inicio da fila (ultimo elemento)
     while (aux->next != *queue) {
-        if (aux == elem) {
+        if (aux->next == elem) {
             return 1;
         }
 
