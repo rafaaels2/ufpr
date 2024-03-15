@@ -1,4 +1,4 @@
-// Rafael Gonçalves dos Santos - 20211798
+// GRR20211798 Rafael Gonçalves dos Santos
 
 #include <stdio.h>
 #include "queue.h"
