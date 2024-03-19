@@ -1,0 +1,57 @@
+Aula 01
+
+Sistema operacional faz a ponte entre os dispositivos de hardware e as aplicações. 
+
+ABSTRAÇÃO DE RECURSOS:
+	> de uma mesma maneira é possível extrair dados de diferentes dispositivos, como por exemplo: fopen (). Quem permite isso ser possível é o SO.
+
+GERÊNCIA DE RECURSOS:
+	> permitir uso compratilhado da CPU, manejando meméoria para cada processo.
+
+Aula 02
+
+Estrutura:
+	1. Dispositíveis Fisícos (hardware)
+	2. Controladores de Hardware (hardware)
+	3. Drivers (sistema)
+	4. Kernel (sistema)
+	5. Aplicações (usuário)
+
+Interrupções são desvios causados pelo hardware. Exemplo: Recebimento de pacote de rede
+	1. Recebe o dado
+	2. Esse dado vai para o controlador do hardware
+	3. através do barramaneto essa informação vai até o processador
+	4. ocorre o desvio do código para um pedaço de código que trata essa interrupção
+	5. retorna para o código e executa novamente
+
+chamaadas ao sistema. As aplicações não podem interagir diretamente com o hardware, logo essas aplicações realizam chamadas ao sistema (syscalls) para mediar essa ponte. 
+	1. Aplicação realiza syscall
+	2. programa desvia para o endereço que trata as chamadas ao sistema
+	3. verifica qual foi a chamada realizada (com o opcode)
+	4. desvia para a implementação da chamada
+	5. retorna pro código
+
+Aula 03
+
+Sitema Monolítico
+	> mais utilizado
+	> pquenas modunaças em algum módulo pode acarretar em problemas em outros módulos
+	> bom desempenho
+	
+Sistema Microlítico
+	> menor desempenho, pois necessita de mais comunicações
+	> separa mecanismos (kernel) de políticas (fora do kernl)
+	> essa poliíticas vão para o espaço de usuário, virando processos
+	> a grande diferença é que, por cada processo precisar de vário módulos e esses módulos estarem fora do kernel. cada ação de cada módulo precisa enviar uma mensagem para o kernel, fazendo com que seja mais custosa a ação.
+
+Sistema em Camadas
+	> Problema em saber quem está acima de quem em determinados módulos
+	
+Sistemas HíbridosS
+	> Mistura tudo !!!
+
+Máquinas Virtuais
+	> Emula um sistema operacional em outro
+
+Containêrs
+	> Divide o espaço de usuário, usa o mesmo kernel
