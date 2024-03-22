@@ -1,0 +1,19 @@
+.nav-container {
+    background-color: #594E4A; 
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+}
+
+.name {
+    font-family: serif; 
+    color: #D9C3A9;
+    font-size: 2em;
+    padding: 3%;
+}
+
+.line {
+    background-color: #D9C3A9;
+    width: 200px;
+    height: 2px;
+}
