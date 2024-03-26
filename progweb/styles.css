@@ -1,3 +1,7 @@
+.container {
+    height: 100%;
+}
+
 .nav-container {
     background-color: #594E4A; 
     display: flex; 
@@ -12,8 +16,14 @@
     padding: 3%;
 }
 
+.icon {
+    border-radius: 15%; 
+    margin-bottom: 10%;
+}
+
 .line {
     background-color: #D9C3A9;
     width: 200px;
     height: 2px;
+    margin-bottom: 15%;
 }
