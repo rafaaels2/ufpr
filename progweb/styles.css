@@ -1,29 +1,161 @@
-.container {
-    height: 100%;
+.screen-container {
+    display: flex
 }
 
 .nav-container {
     background-color: #594E4A; 
-    display: flex; 
+    height: 100vh;
+    display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 1%;
 }
 
 .name {
     font-family: serif; 
     color: #D9C3A9;
-    font-size: 2em;
-    padding: 3%;
+    font-size: 30px;
 }
 
 .icon {
     border-radius: 15%; 
     margin-bottom: 10%;
+    margin-top: 5%;
 }
 
 .line {
     background-color: #D9C3A9;
-    width: 200px;
-    height: 2px;
-    margin-bottom: 15%;
+    width: 100%;
+    height: 0.05%;
+}
+
+.list-container {
+    width: 80%;
+    margin-top: 10%;
+}
+
+.list {
+    color: #D9C3A9; 
+    font-size: 20px; 
+    text-decoration: none;
+}
+
+.list-link {
+    color: inherit;
+}
+
+.disclaimer-container {
+    margin-top: auto;
+    height: 22.5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.disclaimer-text {
+    font-size: 16px; 
+    font-family: serif; 
+    color: #D9C3A9;
+    text-align: center;
+}
+
+.body-container {
+    background-color: #D9C3A9; 
+    height: 100vh; 
+}
+
+.header-container {
+    background-color: #3E3531; 
+    width: 99.9%; 
+    height: 20%;
+    margin-left: auto; 
+    padding: 1%; 
+}
+
+.info-container {
+    display: flex;
+}
+
+.info-text {
+    font-size: 20px; 
+    font-family: serif; 
+    color: #D9C3A9; 
+    margin: 0;
+}
+
+.info-image {
+    margin-left: 1%; 
+}
+
+.intersection-line {
+    background-color: #D9C3A9; 
+    width: 100%; 
+    height: 0.3%;
+}
+
+.main-container {
+    background-color: #F2EBCE; 
+    padding: 1%;
+    width: 99.9%; 
+    height: 79.7%; 
+    margin-left: auto;
+    display: flex;
+}
+
+.curriculum-container {
+    width: 80%;
+}
+
+.title {
+    font-size: 25px; 
+    font-family: serif; 
+    color: #000000;
+}
+
+.description {
+    font-size: 16px; 
+    font-family: serif; 
+    color: #3E3531; 
+}
+
+.body-line {
+    background-color: #D9C3A9; 
+    width: 0.05%; 
+    height: 100%; 
+    margin-left: 1%; 
+}
+
+.tecnology-container {
+    display: flex; 
+    align-items: center; 
+    flex-direction: column;
+    width: 20%;
+}
+
+.icons-container {
+    height: 100%; 
+    display: flex; 
+    justify-content: space-between; 
+    flex-direction: column; 
+    margin-top: 3%; 
+    margin-bottom: 3%
+}
+
+.square {
+    background: #3E3531; 
+    width: 140px; 
+    height: 140px; 
+    border-radius: 15%; 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+
+.tierlist-container {
+    background-color: #F2EBCE; 
+    padding: 1%;
+    width: 99.9%; 
+    height: 79.7%; 
+    margin-left: auto;
+    display: flex;
 }
