@@ -152,10 +152,34 @@
 }
 
 .tierlist-container {
-    background-color: #F2EBCE; 
-    padding: 1%;
-    width: 99.9%; 
-    height: 79.7%; 
-    margin-left: auto;
+    display: flex; 
+    align-items: center; 
+    flex-direction: column;
+    width: 15%;
+}
+
+.tierlist-square {
+    background: #3E3531; 
+    width: 140px; 
+    height: 140px; 
+    border-radius: 15%; 
     display: flex;
+    align-items: center;
+    margin-top: 10%; 
+    flex-direction: column; 
+    justify-content: space-between; 
+    padding: 1%;
+}
+
+.tierlist-image {
+    border-radius: 10%;
+    margin-top: 10%; 
+    border: 2px solid #D9C3A9;
+}
+
+.tierlist-text {
+    font-size: 15px; 
+    font-family: serif;
+    color: #D9C3A9;
+    text-align: center;
 }
