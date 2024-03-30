@@ -34,7 +34,7 @@ int main (int argc, char *argv[])
      task_switch (&task) ;
    }
 
-   printf ("main: fim\n");
+   printf ("main: fim");
 
    task_exit (0);
 }

@@ -54,7 +54,7 @@ int main (int argc, char *argv[])
    task_switch (&Ping) ;
    task_switch (&Pong) ;
 
-   printf ("main: fim\n");
+   printf ("main: fim");
 
    task_exit (0);
 }

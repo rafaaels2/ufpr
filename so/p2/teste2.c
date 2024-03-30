@@ -44,7 +44,7 @@ int main (int argc, char *argv[])
    for (i=1; i<=MAXTASK; i++)
       task_switch (&task[i]) ;
 
-   printf ("main: fim\n");
+   printf ("main: fim");
 
    task_exit (0);
 }
