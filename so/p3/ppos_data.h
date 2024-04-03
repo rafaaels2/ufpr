@@ -19,14 +19,6 @@ typedef struct task_t
   // ... (outros campos serão adicionados mais tarde)
 } task_t ;
 
-typedef struct filatask_t
-{
-   struct filatask_t *prev ;  // ptr para usar cast com queue_t
-   struct filatask_t *next ;  // ptr para usar cast com queue_t
-   task_t task ;
-   // outros campos podem ser acrescidos aqui
-} filatask_t ;
-
 // estrutura que define um semáforo
 typedef struct
 {

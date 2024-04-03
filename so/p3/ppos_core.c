@@ -8,11 +8,10 @@
 
 #define STACKSIZE 64*1024	/* tamanho de pilha das threads */
 
-task_t dispacherTask, mainTask, *currentTask;
-filatask_t *readyQueue;
+task_t dispacherTask, mainTask, *currentTask, *readyQueue;
 int id = 0;
 
-void print_elem (void *ptr)
+/* void print_elem (void *ptr)
 {
    filatask_t *elem = ptr ;
 
@@ -22,7 +21,7 @@ void print_elem (void *ptr)
    elem->prev ? printf ("%d", elem->prev->task.id) : printf ("*") ;
    printf ("<%d>", elem->task.id) ;
    elem->next ? printf ("%d", elem->next->task.id) : printf ("*") ;
-}
+} */
 
 void scheduler () {
     queue_append ((queue_t**) readyQueue, (queue_t*) currentTask);
@@ -34,6 +33,8 @@ void dispacher (void * arg) {
 }
 
 void ppos_init () {
+    readyQueue = NULL;
+
     // id da tarefa main
     mainTask.id = 0;
 
@@ -59,6 +60,7 @@ int task_init (task_t *task, void (*start_func)(void *), void *arg) {
     task -> id = ++id;
     task -> prev = NULL;
     task -> next = NULL;
+    task -> status = 0;
 
     // salva o contexto atual na task iniciada
     if (getcontext (&task -> context) != 0) {
@@ -116,7 +118,11 @@ int task_switch (task_t *task) {
 }
 
 void task_yield () {
-    scheduler ();
+    queue_append ((queue_t**) &readyQueue, (queue_t*) &currentTask);
+    
+    currentTask -> id = ++id;
 
-    queue_print ("Saida gerada  ", (queue_t*) readyQueue, print_elem);
+    printf("chegeui aqui 2\n");
+
+    /* queue_print ("Saida gerada  ", (queue_t*) readyQueue, print_elem); */
 }

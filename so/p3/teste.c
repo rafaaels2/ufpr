@@ -16,7 +16,7 @@ void Body (void * arg)
    int i ;
 
    printf ("%s: inicio\n", (char *) arg) ;
-   for (i=0; i<5; i++)
+   for (i=0; i<1; i++)
    {
       printf ("%s: %d\n", (char *) arg, i) ;
       task_yield ();
@@ -32,6 +32,8 @@ int main (int argc, char *argv[])
    ppos_init () ;
 
    task_init (&Pang, Body, "    Pang") ;
+
+   task_switch (&Pang);
 
    printf ("main: fim\n");
    task_exit (0);

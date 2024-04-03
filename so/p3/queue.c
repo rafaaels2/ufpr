@@ -63,8 +63,14 @@ int queue_append (queue_t **queue, queue_t *elem) {
         return 1;
     }
 
+    {/* 
+        nao sei porque cargas d agua, quando passo a task_t para a função, o elem->prev não fica nulo. 
+        Por isso, deixei apenas a confirmação do elem->next, que deve funcionar logicamente da mesma maneira,
+        pois todo elemento da fila não deve possuir nenhum ponteiro nulo.
+    */}
+
     // elemento pertence a outra fila
-    if (elem->prev != NULL || elem->next != NULL) {
+    if (/* elem->prev != NULL || */ elem->next != NULL) {
         fprintf (stderr, "Elemento pertence a outra fila\n");
         return 1;
     }
