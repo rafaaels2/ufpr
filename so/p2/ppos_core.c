@@ -26,7 +26,7 @@ void ppos_init () {
 }
 
 int task_id () {
-    return currentTask -> id;
+    return currentTask->id;
 }
 
 int task_init (task_t *task, void (*start_func)(void *), void *arg) {

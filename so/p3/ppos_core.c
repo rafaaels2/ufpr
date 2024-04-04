@@ -8,39 +8,76 @@
 
 #define STACKSIZE 64*1024	/* tamanho de pilha das threads */
 
-task_t dispacherTask, mainTask, *currentTask, *readyQueue;
-int id = 0;
+// 0 = Tarefa Finalizada
+// 1 = Tarefa Pronta
+// 2 = Tarefa Rodando
+// 3 = Tarefa Suspensa
 
-/* void print_elem (void *ptr)
+task_t dispacherTask, mainTask, *currentTask, *readyQueue;
+int id = 0, nTasks = -1;
+
+void print_elem (void *ptr)
 {
-   filatask_t *elem = ptr ;
+   task_t *elem = ptr ;
 
    if (!elem)
       return ;
 
-   elem->prev ? printf ("%d", elem->prev->task.id) : printf ("*") ;
-   printf ("<%d>", elem->task.id) ;
-   elem->next ? printf ("%d", elem->next->task.id) : printf ("*") ;
-} */
+   printf ("%d", elem->id) ;
+}
 
-void scheduler () {
-    queue_append ((queue_t**) readyQueue, (queue_t*) currentTask);
-
+task_t *scheduler () {
+    // se a fila for vazia retorna nulo
+    if (queue_size ((queue_t*) readyQueue) == 0)
+        return NULL;
+    
+    // retorna a primeira tarefa da fila
+    return readyQueue;
 }
 
 void dispacher (void * arg) {
-    queue_remove ((queue_t**) readyQueue, (queue_t*) &dispacherTask);
+    task_t *proxima;
+
+    while (nTasks > 0) {
+        #ifdef DEBUG
+        queue_print ("Prontas: ", (queue_t*) readyQueue, print_elem);
+        #endif
+
+        // pega a proxima tarefa a ser executada
+        proxima = scheduler ();
+
+        if (proxima != NULL) {
+            // remove a task atual da fila
+            queue_remove ((queue_t**) &readyQueue, (queue_t*) proxima);
+            nTasks--;
+
+            // troca o contxeto para a proxima tarefa
+            task_switch (proxima);
+
+            // // altera o status da tarefa atual para SUSPENSA
+            proxima -> status = 3;
+        }
+    }   
+
+    exit (0);
 }
 
 void ppos_init () {
-    readyQueue = NULL;
+    /* DÚVIDAS EM RELAÇÃO A INICIALIZAÇÃO DA MAIN */
 
-    // id da tarefa main
-    mainTask.id = 0;
+    // inicializa a mainTask
+    mainTask.prev = NULL;
+    mainTask.prev = NULL;
+    mainTask.id = id;
+    mainTask.status = 2;
 
-    // contexto atual é o contextoMain
+    // atribui a mainTask para a tarefa atual
     currentTask = &mainTask;
 
+    // inicializa a fila de prontas
+    readyQueue = NULL;
+
+    // inicializa o dispacher
     task_init (&dispacherTask, dispacher, "Dispacher");
     
     // desativa o buffer da saida padrao (stdout), usado pela função printf 
@@ -56,11 +93,11 @@ int task_id () {
 }
 
 int task_init (task_t *task, void (*start_func)(void *), void *arg) {
-    // define o id da tarefa
-    task -> id = ++id;
+    // inicializa a tarefa
     task -> prev = NULL;
     task -> next = NULL;
-    task -> status = 0;
+    task -> id = ++id;
+    task -> status = 1;
 
     // salva o contexto atual na task iniciada
     if (getcontext (&task -> context) != 0) {
@@ -87,6 +124,11 @@ int task_init (task_t *task, void (*start_func)(void *), void *arg) {
     // passa a funcao para a funcao e seus respectivos parametros para a task
     makecontext (&task -> context, (void*)(*start_func), 1, arg);
 
+    // adiciona a tarefa nova na fila de prontas
+    nTasks++;
+    if (task -> id != 1) 
+        queue_append ((queue_t**) &readyQueue, (queue_t*) task);
+
     #ifdef DEBUG
     printf ("# task %d criada por %d\n", id, currentTask -> id) ;
     #endif
@@ -95,8 +137,15 @@ int task_init (task_t *task, void (*start_func)(void *), void *arg) {
 }
 
 void task_exit (int exit_code) {
-    // retorna para a main
-    task_switch (&mainTask);
+    // altera o status da tarefa atual para FINALIZADA
+    currentTask -> status = 0;
+
+    #ifdef DEBUG
+    printf ("# tarefa %d terminou\n", currentTask -> id);
+    #endif
+
+    // retorna para o dispacher
+    task_switch (&dispacherTask);
 }
 
 int task_switch (task_t *task) {
@@ -108,6 +157,9 @@ int task_switch (task_t *task) {
     printf ("# troca de task %d -> %d\n", aux -> id, currentTask -> id) ;
     #endif
 
+    // altera o status da tarefa atual para RODANDO
+    currentTask -> status = 2;
+
     // realiza a troca de contexto
     if (swapcontext (&aux -> context, &task -> context) != 0) {
         perror ("Erro no swapcontext: ");
@@ -118,11 +170,19 @@ int task_switch (task_t *task) {
 }
 
 void task_yield () {
-    queue_append ((queue_t**) &readyQueue, (queue_t*) &currentTask);
-    
-    currentTask -> id = ++id;
+    #ifdef DEBUG
+    printf ("# task %d chamou a CPU\n", currentTask -> id) ;
+    #endif
 
-    printf("chegeui aqui 2\n");
+    // altera o status da tarefa atual para PRONTA
+    currentTask -> status = 1;
 
-    /* queue_print ("Saida gerada  ", (queue_t*) readyQueue, print_elem); */
+    // adiciona a tarefa atual na fila
+    if (currentTask -> id != 0) {
+        queue_append ((queue_t**) &readyQueue, (queue_t*) currentTask);
+        nTasks++;
+    }
+
+    // volta para o dispacher
+    task_switch (&dispacherTask);
 }
