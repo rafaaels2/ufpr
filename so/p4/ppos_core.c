@@ -35,12 +35,10 @@ task_t *scheduler () {
     if (size == 0)
         return NULL;
     
-    // queue_print ("Prontas: ", (queue_t*) readyQueue, print_elem);
-
     maiorPrio = readyQueue;
     aux = readyQueue -> next;
 
-    // retorna a tarefa com maior prioridade dinamica
+    // encontra a tarefa com maior prioridade dinamica
     for (int i = 1; i < size; i++) {
         if (aux -> prioDinamica < maiorPrio -> prioDinamica) {
             maiorPrio -> prioDinamica = maiorPrio -> prioDinamica - 1;
@@ -48,13 +46,16 @@ task_t *scheduler () {
         }
 
         else {
-            aux -> prioDinamica = aux -> prioDinamica - 1;
+            // verifica se a atrefa ja tem pioridade maxima
+            if (aux -> prioDinamica != -20) {
+                aux -> prioDinamica = aux -> prioDinamica - 1;
+            }
         }
 
         aux = aux -> next;
     }
 
-    // regenera para a prioridade original
+    // regenera a tarefa escolhida para a prioridade original
     maiorPrio -> prioDinamica = maiorPrio -> prioEstatica;
 
     return maiorPrio;
@@ -215,11 +216,20 @@ void task_yield () {
 }
 
 void task_setprio (task_t *task, int prio) {
+    // verifica se prio está entre o intervalo correto
+    if (prio < -20)
+        prio = -20;
+
+    else if (prio > 20)
+        prio = 20;
+
+    // define a prioridade da tarefa atual
     if (task == NULL) {
         currentTask -> prioEstatica = prio;
         currentTask -> prioDinamica = prio;
     }
 
+    // define a prioridade da tarefa passada como parametro
     else {
         task -> prioEstatica = prio;
         task -> prioDinamica = prio;
