@@ -1,0 +1,16 @@
+readyQueue: Pang -> Peng -> Ping -> Pong -> Pung
+
+Pang.prioEstatica = 0
+Pang.prioDinamica = 0
+
+Peng.prioEstatica = 2
+Peng.prioDinamica = 3
+
+Ping.prioEstatica = 4
+Ping.prioDinamica = 4
+
+Pong.prioEstatica = 6
+Pong.prioDinamica = 6
+
+Pung.prioEstatica = 8
+Pung.prioDinamica = 8
