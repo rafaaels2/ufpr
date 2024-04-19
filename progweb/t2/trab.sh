@@ -29,6 +29,8 @@ function validarEntrada () {
 }
 
 # inclui um elemento na tabela
+# metodos para inserção -> rafael, "rafael", nome=rafael, nome="rafael"
+# se passar mais parametres que o necessario, não serao contabilzados os demais
 function inclui () {
     # pega o numero de parametros passados
     validarEntrada "$@"
@@ -36,15 +38,24 @@ function inclui () {
 
     # aborta o programa
     if [ $verificacao -eq 0 ]; then
-        echo "# Número insufisciênte de parâmetros" >&2
+        echo "# Paramêtros inconsistêntes" >&2
         return 1
     fi
 
     # realiza a inclusao
     if [ "$1" = "pessoas" ]; then
-        ruby Pessoas/inicializaPessoas.rb $2 $3 $4 $5
-    elif ["$1" = "carros"]; then
-        echo "carros"
+        rg=$(echo "$2" | cut -d'=' -f2)
+        nome=$(echo "$3" | cut -d'=' -f2)
+        idade=$(echo "$4" | cut -d'=' -f2)
+        cidade=$(echo "$5" | cut -d'=' -f2)
+
+        ruby Pessoas/inicializaPessoas.rb "$rg" "$nome" "$idade" "$cidade"
+    elif [ "$1" = "carros" ]; then
+        crv=$(echo "$2" | cut -d'=' -f2)
+        nome=$(echo "$3" | cut -d'=' -f2)
+        marca=$(echo "$4" | cut -d'=' -f2)
+
+        ruby Carros/inicializaCarros.rb "$crv" "$nome" "$marca"
     else
         echo "# Tabela Inexistente"
     fi
@@ -58,7 +69,7 @@ function lista () {
 
     # aborta o programa
     if [ $verificacao -eq 0 ]; then
-        echo "# Número insufisciênte de parâmetros" >&2
+        echo "# Paramêtros inconsistêntes" >&2
         return 1
     fi
 
@@ -66,7 +77,7 @@ function lista () {
     if [ "$1" = "pessoas" ]; then
         ruby Pessoas/listaPessoas.rb
     elif [ "$1" = "carros" ]; then
-        echo "carros"
+        ruby Carros/listaCarros.rb
     else
         echo "# Tabela Inexistente"
     fi
@@ -80,7 +91,7 @@ function exclui () {
 
     # aborta o programa
     if [ $verificacao -eq 0 ]; then
-        echo "# Número insufisciênte de parâmetros" >&2
+        echo "# Paramêtros inconsistêntes" >&2
         return 1
     fi
 
@@ -88,8 +99,16 @@ function exclui () {
     if [ "$1" = "pessoas" ]; then
         ruby Pessoas/removePessoas.rb $2
     elif [ "$1" = "carros" ]; then
-        echo "carros"
+        ruby Carros/removeCarros.rb $2
     else
         echo "# Tabela Inexistente"
     fi
+}
+
+function teste () {
+    echo $# 
+    echo $5
+
+    parte=$(echo "$5" | cut -d'=' -f2)
+    echo "$parte"
 }

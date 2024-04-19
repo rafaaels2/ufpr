@@ -40,7 +40,7 @@ class Pessoa < ActiveRecord::Base;
 
     def somente_numeros
         if !rg.only_numbers?
-            errors.add(:rg, "# Rg deve ter somente numeros")
+            errors.add(:rg, "# RG deve ter somente números")
         end
 
         if !idade.only_numbers?

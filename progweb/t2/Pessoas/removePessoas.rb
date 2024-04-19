@@ -1,12 +1,12 @@
 $:.push './'
-require 'pessoa.rb'
+require './Pessoas/pessoa.rb'
 
 # remove uma pessoa
 if ARGV.length == 1 
     pessoa = Pessoa.find_by_rg(ARGV[0])
 # aborta com numero errado de parametros
 else
-    abort ("# Número insufisciênte de parâmetros")
+    abort ("# Paramêtros inconsistêntes")
 end
 
 # aborta caso RG não exista

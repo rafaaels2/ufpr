@@ -1,5 +1,5 @@
 $:.push './'
-require 'pessoa.rb'
+require './Pessoas/pessoa.rb'
 
 # imprime todas as pessoas da tabela
 pessoas = Pessoa.all

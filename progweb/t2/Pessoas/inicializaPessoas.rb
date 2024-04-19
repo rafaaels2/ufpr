@@ -1,12 +1,15 @@
 $:.push './'
-require 'pessoa.rb'
+require './Pessoas/pessoa.rb'
+
+# verifica se todas as strings de ARGV são não nulas
+string_nula = ARGV.all? { |str| !str.nil? && !str.empty? }
 
 # inicializa a nova pessoa
-if ARGV.length == 4
+if string_nula
     pessoa = Pessoa.new ({:rg=>ARGV[0],:nome=>ARGV[1],:idade=>ARGV[2],:cidade=>ARGV[3]})
 # aborta com numero errado de parametros
-else
-    abort ("# Número insufisciênte de parâmetros")
+else 
+    abort ("# Paramêtros inconsistêntes")
 end
 
 # confere se não há erros
