@@ -14,6 +14,10 @@ ActiveRecord::Base.establish_connection :adapter => "sqlite3",
                                         :database => "Tabelas.sqlite3"
 
 class Pessoa < ActiveRecord::Base;
+    has_one :carro
+    has_many :computadors
+    has_and_belongs_to_many :disciplinas
+
     validate :rg_tam_4, :idade_maxTam_3, :somente_caracteres, :somente_numeros
 
     def rg_tam_4

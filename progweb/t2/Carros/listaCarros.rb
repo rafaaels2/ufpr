@@ -1,8 +1,9 @@
 $:.push './'
 require './Carros/carro.rb'
+require './Pessoas/pessoa.rb'
 
 # imprime todas os carros da tabela
-carro = Carro.all
-carro.each do |p|
-    puts "# CRV: #{p.crv} | NOME: #{p.nome} | MARCA: #{p.marca}"
+carros = Carro.all
+carros.each do |c|
+    puts "# CRV: #{c.crv} | NOME: #{c.nome} | MARCA: #{c.marca} | RG RESPONSÀVEL: #{c.pessoa.rg}"
 end

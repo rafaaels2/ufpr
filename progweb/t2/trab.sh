@@ -8,6 +8,9 @@
 function inicializa () {
     ruby Carros/criaCarros.rb
     ruby Pessoas/criaPessoas.rb
+    ruby Computadors/criaComputadors.rb
+    ruby Disciplinas/criaDisciplinas.rb
+    ruby Relacionais/criaDisciplinasPessoas.rb
 
     echo "# Tabelas Inicializadas !"
 }
@@ -45,17 +48,45 @@ function inclui () {
     # realiza a inclusao
     if [ "$1" = "pessoas" ]; then
         rg=$(echo "$2" | cut -d'=' -f2)
-        nome=$(echo "$3" | cut -d'=' -f2)
+        nomePessoa=$(echo "$3" | cut -d'=' -f2)
         idade=$(echo "$4" | cut -d'=' -f2)
         cidade=$(echo "$5" | cut -d'=' -f2)
+        crv=$(echo "$6" | cut -d'=' -f2)
+        nomeCarro=$(echo "$7" | cut -d'=' -f2)
+        marca=$(echo "$8" | cut -d'=' -f2)
 
-        ruby Pessoas/inicializaPessoas.rb "$rg" "$nome" "$idade" "$cidade"
+        ruby Relacionais/incluiPessoasCarros.rb "$rg" "$nomePessoa" "$idade" "$cidade" "$crv" "$nomeCarro" "$marca"
+
     elif [ "$1" = "carros" ]; then
         crv=$(echo "$2" | cut -d'=' -f2)
-        nome=$(echo "$3" | cut -d'=' -f2)
+        nomeCarro=$(echo "$3" | cut -d'=' -f2)
         marca=$(echo "$4" | cut -d'=' -f2)
+        rg=$(echo "$5" | cut -d'=' -f2)
+        nomePessoa=$(echo "$6" | cut -d'=' -f2)
+        idade=$(echo "$7" | cut -d'=' -f2)
+        cidade=$(echo "$8" | cut -d'=' -f2)
 
-        ruby Carros/inicializaCarros.rb "$crv" "$nome" "$marca"
+        ruby Relacionais/incluiPessoasCarros.rb "$rg" "$nomePessoa" "$idade" "$cidade" "$crv" "$nomeCarro" "$marca"
+    
+    elif [ "$1" = "computadors" ]; then
+        numSerie=$(echo "$2" | cut -d'=' -f2)
+        marca=$(echo "$3" | cut -d'=' -f2)
+        rg=$(echo "$4" | cut -d'=' -f2)
+
+        ruby Computadors/incluiComputadors.rb "$numSerie" "$marca" "$rg"
+
+    elif [ "$1" = "disciplinas" ]; then
+        codigo=$(echo "$2" | cut -d'=' -f2)
+        nome=$(echo "$3" | cut -d'=' -f2)
+
+        ruby Disciplinas/incluiDisciplinas.rb "$codigo" "$nome" 
+
+    elif [ "$1" = "disPes" ]; then
+        codigo=$(echo "$2" | cut -d'=' -f2)
+        rg=$(echo "$3" | cut -d'=' -f2)
+
+        ruby Relacionais/incluiDisciplinasPessoas.rb "$codigo" "$rg" 
+
     else
         echo "# Tabela Inexistente"
     fi
@@ -78,6 +109,12 @@ function lista () {
         ruby Pessoas/listaPessoas.rb
     elif [ "$1" = "carros" ]; then
         ruby Carros/listaCarros.rb
+    elif [ "$1" = "computadors" ]; then
+        ruby Computadors/listaComputadors.rb
+    elif [ "$1" = "disciplinas" ]; then
+        ruby Disciplinas/listaDisciplinas.rb
+    elif [ "$1" = "disPes" ]; then
+        ruby Relacionais/listaDisciplinasPessoas.rb
     else
         echo "# Tabela Inexistente"
     fi
@@ -97,18 +134,14 @@ function exclui () {
 
     # realiza a exclusão
     if [ "$1" = "pessoas" ]; then
-        ruby Pessoas/removePessoas.rb $2
+        ruby Relacionais/excluiPessoasCarros.rb $1 $2
     elif [ "$1" = "carros" ]; then
-        ruby Carros/removeCarros.rb $2
+        ruby Relacionais/excluiPessoasCarros.rb $1 $2
+    elif [ "$1" = "computadors" ]; then
+        ruby Computadors/excluiComputadors.rb $2
+    elif [ "$1" = "disciplinas" ]; then
+        ruby Disciplinas/excluiDisciplinas.rb $2
     else
         echo "# Tabela Inexistente"
     fi
-}
-
-function teste () {
-    echo $# 
-    echo $5
-
-    parte=$(echo "$5" | cut -d'=' -f2)
-    echo "$parte"
 }
