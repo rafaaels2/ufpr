@@ -145,3 +145,36 @@ function exclui () {
         echo "# Tabela Inexistente"
     fi
 }
+
+function registros () {
+    # 5 registros de pessoas e 5 carros
+    ruby Relacionais/incluiPessoasCarros.rb 2004 lari 20 bastos 0001 hb20 hyundai
+    ruby Relacionais/incluiPessoasCarros.rb 2003 rafael 20 curitiba 0002 santa hyundai
+    ruby Relacionais/incluiPessoasCarros.rb 2005 henrique 21 curitiba 0003 lancer mitsubishi
+    ruby Relacionais/incluiPessoasCarros.rb 2006 leonardo 20 campinas 0004 astra chevrolet
+    ruby Relacionais/incluiPessoasCarros.rb 2007 milena 18 jose 0005 a3 audi
+
+    # 4 resgistros de Computadores
+    ruby Computadors/incluiComputadors.rb 1000 microsoft 2004
+    ruby Computadors/incluiComputadors.rb 1100 apple 2004
+    ruby Computadors/incluiComputadors.rb 1110 dell 2003
+    ruby Computadors/incluiComputadors.rb 1111 positivo 2005
+
+    # 4 registros de Disiplinas
+    ruby Disciplinas/incluiDisciplinas.rb 1055 alg1
+    ruby Disciplinas/incluiDisciplinas.rb 1010 progweb
+    ruby Disciplinas/incluiDisciplinas.rb 1211 compiladores
+    ruby Disciplinas/incluiDisciplinas.rb 1064 so
+
+    # Registros de 10 relacionamentos entre disciplinas e pessoas
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1055 2004
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1010 2003
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1064 2003
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1211 2005
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1055 2006
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1010 2006
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1211 2007
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1211 2003
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1064 2004
+    ruby Relacionais/incluiDisciplinasPessoas.rb 1010 2004
+}

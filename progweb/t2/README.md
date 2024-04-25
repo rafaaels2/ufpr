@@ -45,5 +45,5 @@ pessoas n: n disciplinas<br>
     * ```$ lista disPes```
 * <span style="color: pink;">**remove**</span>: remove as tabelas
   * COMO USAR: ```$ remove```
-
-
+---
+**IMPORTANTE**: não é necessário inicializar as tabelas, pois os registros iniciais ja foram realizados.

@@ -29,4 +29,5 @@ pessoas.each do |p|
 
     # quebra de linha
     puts
+    puts "-----"
 end
