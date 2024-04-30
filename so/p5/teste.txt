@@ -1,0 +1,12 @@
+# inciio -> quantum = 0;
+# main -> quantum = -1;
+TAKS_EXIT
+    # main.encerra
+    # quantum = -1;
+# dispacher -> quantum = -1;
+# pang -> quantum = 1
+# pang -> 0
+TAKS_EXIT
+    # pang.encerra
+    # quantum = -1
+# dispacher -> quantum = -1
