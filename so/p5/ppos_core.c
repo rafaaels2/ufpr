@@ -19,7 +19,7 @@
 task_t dispacherTask, mainTask, *currentTask, *readyQueue;
 
 // variaveis globais de controle
-int id = 0, nTasks = -1, quantum = 0;
+int id = 0, nTasks = -1, quantum = -1;
 
 // estrutura que define um tratador de sinal (deve ser global ou static)
 struct sigaction action ;
@@ -146,6 +146,9 @@ void ppos_init () {
     mainTask.prev = NULL;
     mainTask.id = id;
     mainTask.status = 2;
+    mainTask.prioEstatica = 0;
+    mainTask.prioDinamica = 0;
+    mainTask.sysProcess = 0;
 
     // atribui a mainTask para a tarefa atual
     currentTask = &mainTask;
