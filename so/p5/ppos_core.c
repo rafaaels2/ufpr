@@ -19,7 +19,7 @@
 task_t dispacherTask, mainTask, *currentTask, *readyQueue;
 
 // variaveis globais de controle
-int id = 0, nTasks = -1, quantum = -1;
+int id = 0, nTasks = -1;
 
 // estrutura que define um tratador de sinal (deve ser global ou static)
 struct sigaction action ;
@@ -89,32 +89,31 @@ void dispacher (void * arg) {
             nTasks--;
             
             // define o quantum para a tarefa atual
-            quantum = 20;
+            proxima -> quantum = 20;
+
+            // dispacher sai da execução
+            dispacherTask.status = 1;
 
             // troca o contxeto para a proxima tarefa
             task_switch (proxima);
         }
     }   
 
-    exit (0);
+    task_exit (0);
 }
 
-void tratador (int signum) {
+void tratador () {
+    #ifdef DEBUG
+        printf ("# QUANTUM: %d\n", currentTask -> quantum);
+    #endif
+
     // decrementa o quantum
-    if (!currentTask -> sysProcess) 
-        quantum--;
+    if (!currentTask -> sysProcess && currentTask -> status == 2) 
+        currentTask -> quantum--;
     
     // caso o quantum do processo tenha acabado
-    if (quantum == 0) {
-        // coloca a tarefa no final da fila
-        queue_append ((queue_t**) &readyQueue, (queue_t*) currentTask);
-
-        // incremente o numero de tarefas na fila 
-        nTasks++;
-
-        // encerra a tarefa
-        task_exit (0);
-    }
+    if (currentTask -> quantum == 0) 
+        task_yield ();
 }
 
 void ppos_init () {
@@ -149,6 +148,7 @@ void ppos_init () {
     mainTask.prioEstatica = 0;
     mainTask.prioDinamica = 0;
     mainTask.sysProcess = 0;
+    mainTask.quantum = -1;
 
     // atribui a mainTask para a tarefa atual
     currentTask = &mainTask;
@@ -180,6 +180,7 @@ int task_init (task_t *task, void (*start_func)(void *), void *arg) {
     task -> prioEstatica = 0;
     task -> prioDinamica = 0;
     task -> sysProcess = 1;
+    task -> quantum = -1;
 
     // salva o contexto atual na task iniciada
     if (getcontext (&task -> context) != 0) {
@@ -227,22 +228,9 @@ int task_init (task_t *task, void (*start_func)(void *), void *arg) {
 
 // POR ALGUM MOTIVO O QUANTUM NÃO DIMINUI NO TASK_EXIT
 void task_exit (int exit_code) {
-    if (quantum == 0) 
-        // altera o status da tarefa atual para SUSPENSA
-        currentTask -> status = 3;
-    else
-        // altera o status da tarefa atual para FINALIZADA
-        currentTask -> status = 0;
-
     #ifdef DEBUG
-    if (quantum == 0)
-        printf ("# tarefa %d suspensa\n", currentTask -> id);
-    else
         printf ("# tarefa %d terminou\n", currentTask -> id);
     #endif
-
-    // altera o quantum para diferente de 0
-    quantum = -1;
 
     // retorna para o dispacher
     task_switch (&dispacherTask);
@@ -258,7 +246,7 @@ int task_switch (task_t *task) {
     #endif
 
     // altera o status da tarefa atual para RODANDO
-    currentTask -> status = 2;
+    task -> status = 2;
 
     // realiza a troca de contexto
     if (swapcontext (&aux -> context, &task -> context) != 0) {
@@ -278,10 +266,8 @@ void task_yield () {
     currentTask -> status = 1;
 
     // adiciona a tarefa atual na fila
-    if (currentTask -> id != 0) {
-        queue_append ((queue_t**) &readyQueue, (queue_t*) currentTask);
-        nTasks++;
-    }
+    queue_append ((queue_t**) &readyQueue, (queue_t*) currentTask);
+    nTasks++;
 
     // volta para o dispacher
     task_switch (&dispacherTask);

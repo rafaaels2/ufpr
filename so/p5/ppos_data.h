@@ -18,7 +18,7 @@ typedef struct task_t
   short status ;			               // pronta, rodando, suspensa, ...
   int prioEstatica, prioDinamica ;    // prioridades da tarefa
   int sysProcess ;
-
+  int quantum ;                      // tempo para a tarefa acessar o processador
 } task_t ;
 
 // estrutura que define um semáforo
