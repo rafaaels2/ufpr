@@ -19,7 +19,7 @@
 task_t dispacherTask, mainTask, *currentTask, *readyQueue;
 
 // variaveis globais de controle
-int id = 0, nTasks = -1;
+int id = 0, nTasks = -1, sysTimer = 0;
 
 // estrutura que define um tratador de sinal (deve ser global ou static)
 struct sigaction action ;
@@ -102,7 +102,7 @@ void dispacher (void * arg) {
     task_exit (0);
 }
 
-void tratador () {
+void tratador (int signum) {
     #ifdef DEBUG
         printf ("# QUANTUM: %d\n", currentTask -> quantum);
     #endif
@@ -114,6 +114,13 @@ void tratador () {
     // caso o quantum do processo tenha acabado
     if (currentTask -> quantum == 0) 
         task_yield ();
+
+    // incrementa 1ms no timer
+    sysTimer++;
+}
+
+unsigned int systime () {
+    return sysTimer;
 }
 
 void ppos_init () {
@@ -149,6 +156,10 @@ void ppos_init () {
     mainTask.prioDinamica = 0;
     mainTask.sysProcess = 0;
     mainTask.quantum = -1;
+    mainTask.initTime = sysTimer;
+    mainTask.nActivations = 1;
+    mainTask.processTime = 0;
+    mainTask.initProcessTime = mainTask.initTime;
 
     // atribui a mainTask para a tarefa atual
     currentTask = &mainTask;
@@ -181,6 +192,9 @@ int task_init (task_t *task, void (*start_func)(void *), void *arg) {
     task -> prioDinamica = 0;
     task -> sysProcess = 1;
     task -> quantum = -1;
+    task -> nActivations = 0;
+    task -> processTime = 0;
+    task -> initTime = sysTimer;
 
     // salva o contexto atual na task iniciada
     if (getcontext (&task -> context) != 0) {
@@ -231,7 +245,16 @@ void task_exit (int exit_code) {
     #ifdef DEBUG
         printf ("# tarefa %d terminou\n", currentTask -> id);
     #endif
-    
+
+    // tempo que a tarefa se encerrou
+    currentTask -> exitTime = sysTimer;
+
+    // altera o status para FINALIZADA
+    currentTask -> status = 0;
+
+    printf ("Task %d exit: execution time %4d ms, processor time %4d ms, %d activations\n", 
+    currentTask -> id, (currentTask -> exitTime - currentTask -> initTime), currentTask -> processTime, currentTask -> nActivations);
+
     // retorna para o dispacher
     task_switch (&dispacherTask);
 }
@@ -245,9 +268,17 @@ int task_switch (task_t *task) {
     printf ("# troca de task %d -> %d\n", aux -> id, currentTask -> id) ;
     #endif
 
+    // tempo que se encerrou o uso do processador
+    aux -> suspProcessTime = sysTimer;
+    aux -> processTime = aux -> processTime + (aux -> suspProcessTime - aux -> initProcessTime);
+
     // altera o status da tarefa atual para RODANDO
     task -> status = 2;
 
+    // incrementa o numero de ativações
+    task -> nActivations++;
+    task -> initProcessTime = sysTimer;
+ 
     // realiza a troca de contexto
     if (swapcontext (&aux -> context, &task -> context) != 0) {
         perror ("Erro no swapcontext: ");
