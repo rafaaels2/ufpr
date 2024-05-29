@@ -14,16 +14,12 @@
             var ctx = canvas.getContext("2d");
 
             var width = window.innerWidth;
-            var height = window.innerHeight;
-
-            canvas.width = width;
-            canvas.height = height;
+            var height = window.innerHeight; 
 
             ctx.fillStyle = "pink";
             ctx.fillRect((width/2) - 150, 200, 300, 10);
 
             meio = false;
-            direita = false;
 
             xAtual    = (width/2) - 150,  yAtual    = 200;
             xAnterior = (width/2) - 150 , yAnterior = 200;
@@ -37,13 +33,10 @@
             }
 
             canvas.addEventListener("mousedown", function(event) {
-                if ( event.clientX >= (xAtual + 50) && event.clientX <= (xAtual + 250) && event.clientY >= yAtual && event.clientY <= (yAtual + 10) ) {
+                if ( event.clientX >= (xAnterior + 50) && event.clientX <= (xAnterior + 250) && event.clientY >= yAnterior && event.clientY <= (yAnterior + 10) ) {
                     meio = true;
                 }
 
-                else if ( event.clientX >= (xAnterior + 250) && event.clientX <= (xAnterior + 300) && event.clientY >= yAnterior && event.clientY <= (yAnterior + 10) ) {
-                    direita = true;
-                }
             });
 
             canvas.addEventListener("mousemove", function(event) {
@@ -52,18 +45,16 @@
                     xAtual = event.clientX;
                     drawLine ();
                 }
-
-                else if (direita) {
-                    ctx.rotate (45 * (Math.PI/180));
-                    ctx.clearRect(xAnterior, yAnterior, 300, 10);
-                    ctx.fillStyle = "pink";
-                    ctx.fillRect(xAnterior, yAnterior, 300, 10);
-                }
             });
 
             canvas.addEventListener("mouseup", function(event) {
                 meio = false;
-                direita = false;
+            });
+
+            canvas.addEventListener("contextmenu", function(event) {
+                if ( event.clientX >= (xAnterior + 50) && event.clientX <= (xAnterior + 250) && event.clientY >= yAnterior && event.clientY <= (yAnterior + 10) ) {
+                    
+                }
             });
 
         </script>
