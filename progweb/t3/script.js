@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const canvasContainer = document.getElementById('canvasContainer');
     const drawButton = document.getElementById('drawButton');
     const numVerticesInput = document.getElementById('numVertices');
-    const singleEdgeContainer = document.getElementById('singleEdgeContainer');
 
     let vertices = [];
 
@@ -80,63 +79,6 @@ document.addEventListener("DOMContentLoaded", function() {
         canvasContainer.appendChild(canvas);
     }
 
-    function drawSingleEdge(startX, endX) {
-        const length = endX - startX;
-        const midX = (startX + endX) / 2;
-    
-        // Define o comprimento de cada nova aresta
-        const segmentLength = length / 2;
-    
-        // Calcula o ponto médio entre startX e midX
-        const halfX = startX + segmentLength / 2;
-    
-        // Desenha a primeira nova aresta
-        const canvas1 = createEdgeCanvas(startX, segmentLength);
-    
-        // Adiciona evento de clique com botão direito para dividir a aresta
-        canvas1.addEventListener('contextmenu', function(event) {
-            event.preventDefault(); // Previne o menu de contexto padrão
-            drawSingleEdge(startX, midX);
-            drawSingleEdge(midX, endX);
-            singleEdgeContainer.removeChild(canvas1);
-        });
-    
-        // Desenha a segunda nova aresta ao lado da primeira
-        const canvas2 = createEdgeCanvas(halfX, segmentLength);
-    
-        // Adiciona evento de clique com botão direito para dividir a aresta
-        canvas2.addEventListener('contextmenu', function(event) {
-            event.preventDefault(); // Previne o menu de contexto padrão
-            drawSingleEdge(startX, midX);
-            drawSingleEdge(midX, endX);
-            singleEdgeContainer.removeChild(canvas2);
-        });
-    
-        // Adiciona os canvases ao contêiner
-        singleEdgeContainer.appendChild(canvas1);
-        singleEdgeContainer.appendChild(canvas2);
-    }
-    
-    // Função auxiliar para criar um canvas para a aresta
-    function createEdgeCanvas(startX, length) {
-        const canvas = document.createElement('canvas');
-        canvas.className = 'single-edge-canvas';
-        canvas.width = length;
-        canvas.height = 10;
-        canvas.style.left = `${startX}px`;
-    
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = 'blue';
-        ctx.fillRect(0, 0, length, 10);
-    
-        return canvas;
-    }
-    
-    
-    
-    
-    
-
     // Adiciona evento ao botão para desenhar o polígono
     drawButton.addEventListener('click', function() {
         const numVertices = parseInt(numVerticesInput.value, 10);
@@ -146,7 +88,4 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('Por favor, insira um número de 3 a 8.');
         }
     });
-
-    // Desenha a aresta única inicial
-    drawSingleEdge(0, 300);
 });
