@@ -1,0 +1,61 @@
+// PingPongOS - PingPong Operating System
+// Prof. Carlos A. Maziero, DINF UFPR
+// Versão 1.5 -- Março de 2023
+
+// Estruturas de dados internas do sistema operacional
+
+#ifndef __PPOS_DATA__
+#define __PPOS_DATA__
+
+#include <ucontext.h>		// biblioteca POSIX de trocas de contexto
+
+// biblioteca de filas
+#include "queue.h"
+
+// Estrutura que define um Task Control Block (TCB)
+typedef struct task_t
+{
+  struct task_t *prev, *next ;		                                            // ponteiros para usar em filas
+  int id ;				                                                            // identificador da tarefa
+  ucontext_t context ;			                                                  // contexto armazenado da tarefa
+  short status ;			                                                        // pronta, rodando, suspensa, ...
+  int prioEstatica, prioDinamica ;                                            // prioridades da tarefa
+  int sysProcess ;                                                            // flag para tarefas de sistema
+  int quantum ; 
+  int initTime, exitTime, initProcessTime, suspProcessTime, processTime ;     // tempos de execução
+  int nActivations ;                                                          // numero de ativacoes da tarefa
+  queue_t *suspQueue ;
+  int awakeTime ;
+} task_t ;
+
+// estrutura que define um semáforo
+typedef struct
+{
+  int cont ;
+  queue_t *tasksQueue ;
+} semaphore_t ;
+
+// estrutura que define um mutex
+typedef struct
+{
+  // preencher quando necessário
+} mutex_t ;
+
+// estrutura que define uma barreira
+typedef struct
+{
+  // preencher quando necessário
+} barrier_t ;
+
+// estrutura que define uma fila de mensagens
+typedef struct
+{
+  void **buffer;
+  int max, n_msgs;
+  semaphore_t s_buffer;
+  semaphore_t s_vaga;
+  semaphore_t s_msg;
+
+} mqueue_t ;
+
+#endif
