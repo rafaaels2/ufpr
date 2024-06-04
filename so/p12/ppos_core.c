@@ -296,7 +296,7 @@ void task_exit (int exit_code) {
         task_awake ((task_t*) currentTask -> suspQueue, (task_t**) &currentTask -> suspQueue);
     }
 
-    /* queue_print ("Suspensas: ", (queue_t*) asleepQueue, print_elem); */
+    queue_print ("PRONTAS: ", (queue_t*) readyQueue, print_elem); 
 
     // retorna para o dispacher
     task_switch (&dispacherTask);
@@ -496,14 +496,10 @@ int sem_destroy (semaphore_t *s) {
     enter_cs (&lock);
 
     // acorda todas as tarefas
-    while (currentTask -> suspQueue != NULL) {
+    while (s -> tasksQueue != NULL) {
         // passa o primeiro elemento da fila e a fila
         task_awake ((task_t*) s -> tasksQueue, (task_t**) &s -> tasksQueue);
     }
-
-    // verifica se todas as tarefas foram acordadas
-    if (currentTask -> suspQueue != NULL)
-        return -1;
 
     // destroi o semaforo
     s = NULL;
@@ -514,7 +510,7 @@ int sem_destroy (semaphore_t *s) {
 }
 
 int put (mqueue_t *queue, void *item, int n) {
-    if (queue == NULL) {
+    if (queue -> buffer == NULL) {
         // buffer is full, avoid overflow
         return -1;
     }
@@ -530,7 +526,7 @@ int put (mqueue_t *queue, void *item, int n) {
 void *get (mqueue_t *queue, int n) {
     void *value;
 
-    if (queue == NULL) {
+    if (queue -> buffer == NULL) {
         // buffer is empty
         return NULL;
     }
@@ -590,18 +586,11 @@ int mqueue_recv (mqueue_t *queue, void *msg) {
 }
 
 int mqueue_destroy (mqueue_t *queue) {
-    // free (queue -> buffer);
+    queue -> buffer = NULL;
 
-    /* if (sem_destroy (&queue -> s_buffer) < 0)
-        return -1;
-
-    if (sem_destroy (&queue -> s_vaga) < 0)
-        return -1;
-
-    if (sem_destroy (&queue -> s_msg) < 0)
-        return -1; */
-
-    queue = NULL;
+    (sem_destroy (&queue -> s_buffer));
+    (sem_destroy (&queue -> s_vaga));
+    (sem_destroy (&queue -> s_msg));
 
     return 0;
 }

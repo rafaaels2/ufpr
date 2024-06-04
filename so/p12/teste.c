@@ -13,21 +13,6 @@
 task_t prod[3], somador, cons[2] ;
 mqueue_t queueValores, queueRaizes ;
 
-void *geta (mqueue_t *queue, int n) {
-    void *value;
-
-    if (queue == NULL) {
-        // buffer is empty
-        return NULL;
-    }
-
-    value = queue -> buffer[n];
-
-    queue -> n_msgs--;
-
-    return value;
-}
-
 // corpo da thread produtor
 void prodBody (void * saida)
 {
@@ -58,12 +43,8 @@ void somaBody (void * arg)
    int v1, v2, v3, i ;
    double soma, raiz ;
 
-   for (i=0; i<10; i++)
+   for (i=0; i<3; i++)
    {
-      for (int i = 0; i < 5; i++){
-         printf ("%d ", *(int*) geta (&queueValores, i));
-      }
-
       // recebe tres valores inteiros
       mqueue_recv (&queueValores, &v1) ;
       printf ("\t\tT%d: recebeu %d\n", task_id(), v1) ;
@@ -127,8 +108,6 @@ int main (int argc, char *argv[])
 
    // aguarda o somador encerrar
    task_wait (&somador) ;
-
-   exit (1);
 
    // destroi as filas de mensagens
    printf ("main: destroi queueValores\n") ;
