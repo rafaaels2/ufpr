@@ -19,7 +19,24 @@ void print_proibidas (noh_casa **casas, unsigned int n) {
         }
 
         printf ("c: %d ", aux -> casa_proibida.coluna);
-        printf ("| n: %d\n", casas[i]->n_casas);
+        printf ("| n: %d\n", casas[i] -> n_casas);
+    }
+}
+
+void print_tabuleiro (noh_grafo **casas, unsigned int n) {
+    noh_grafo *aux;
+    printf ("\n# VETOR DE LISTAS\n");
+    for (unsigned int i = 0; i < n; i++) {
+        aux = casas[i];
+        printf ("# [%d] = ", i);
+
+        while (aux -> next != NULL) {
+            printf ("c: %d", aux -> vertice);
+            aux = aux -> next;
+            printf (" > ");
+        }
+
+        printf ("c: %d ", aux -> vertice);
     }
 }
 
@@ -54,7 +71,7 @@ unsigned int *inicializa (casa *c, unsigned int *r, unsigned int n, unsigned int
     /* aloca o primeiro noh de cada lista */
     for (unsigned int i = 0; i < n; i++) {
         proibidas[i] = (noh_casa *) malloc (sizeof (noh_casa));
-        if (proibidas == NULL) {
+        if (proibidas[i] == NULL) {
             fprintf (stderr, "# erro ao alocar noh\n");
             return r;
         }
@@ -161,6 +178,7 @@ unsigned int *rainhas_bt(unsigned int n, unsigned int k, casa *c, unsigned int *
     /* condicao de sucesso */ 
     if (n_rainhas == n) {
         desaloca_memoria (n);
+        n_rainhas = 0;
         return r;
     }
   
@@ -241,10 +259,98 @@ unsigned int *rainhas_bt(unsigned int n, unsigned int k, casa *c, unsigned int *
 // n, c e r são como em rainhas_bt()
 
 unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *r) {
+    noh_grafo **grafo, *aux, *noh;
+    unsigned int coluna = 1, n_casas = n * n;
+    int diagonal_e, diagonal_d;
 
-    n = n;
-    k = k;
-    c = c;
+    inicializa (c, r, n, k);
+    
+    /* aloca vetor de listas */
+    grafo = (noh_grafo **) malloc (n * sizeof (noh_grafo *));
+    if (grafo == NULL) {
+        fprintf (stderr, "# erro ao alocar vetor\n");
+        return r;
+    }
+
+    for (unsigned int i = 0; i < n_casas; i++) {
+        grafo[i] = (noh_grafo *) malloc (sizeof (noh_grafo));
+        if (grafo[i] == NULL) {
+            fprintf (stderr, "# erro ao alocar noh\n");
+            return r;
+        }
+        
+        grafo[i] -> vertice = i;
+        grafo[i] -> next = NULL;
+
+
+        aux = grafo[i];
+        for (unsigned int j = 0; j < (n - coluna); j++) {
+            noh = (noh_grafo *) malloc (sizeof (noh_grafo));
+            if (noh == NULL) {
+                fprintf (stderr, "# erro ao alocar noh\n");
+                return r;
+            }
+            
+            noh -> vertice = grafo[i] -> vertice + j + 1;
+            noh -> next = NULL;
+
+            aux -> next = noh;
+            aux = aux -> next;
+        }
+        
+        diagonal_e = (int) coluna - 1;
+        diagonal_d = (int) coluna + 1;
+
+        for (unsigned int j = 1; j < n ; j++) {
+            if (diagonal_e > 0) {
+                noh = (noh_grafo *) malloc (sizeof (noh_grafo));
+                if (noh == NULL) {
+                    fprintf (stderr, "# erro ao alocar noh\n");
+                    return r;
+                }
+
+                noh -> vertice = grafo[i] -> vertice + (n - 1) * j;
+                noh -> next = NULL;
+
+                aux -> next = noh;
+                aux = aux -> next;
+            }
+
+            noh = (noh_grafo *) malloc (sizeof (noh_grafo));
+            if (noh == NULL) {
+                fprintf (stderr, "# erro ao alocar noh\n");
+                return r;
+            }
+
+            noh -> vertice = grafo[i] -> vertice + n * j;
+            noh -> next = NULL;
+
+            aux -> next = noh;
+            aux = aux -> next;
+
+            if (diagonal_d <= (int) n) {
+                noh = (noh_grafo *) malloc (sizeof (noh_grafo));
+                if (noh == NULL) {
+                    fprintf (stderr, "# erro ao alocar noh\n");
+                    return r;
+                }
+
+                noh -> vertice = grafo[i] -> vertice + (n + 1) * j;
+                noh -> next = NULL;
+
+                aux -> next = noh;
+                aux = aux -> next;
+            }
+
+            diagonal_e--;
+            diagonal_d++; 
+        }
+
+        if (coluna > n)
+            coluna = 0;
+        
+        coluna++;
+    }
 
     return r;
 }

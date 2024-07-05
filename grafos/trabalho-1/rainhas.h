@@ -15,6 +15,13 @@ typedef struct noh_casa {
   struct noh_casa *next, *prev;
 } noh_casa;
 
+typedef struct noh_grafo {
+  unsigned int vertice;
+  struct noh_grafo *next;
+} noh_grafo;
+
+
+
 /*
  * @brief imprime o vetor de listas
  *
