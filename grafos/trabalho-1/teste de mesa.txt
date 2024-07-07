@@ -1,0 +1,68 @@
+grafo = {
+    [
+        vertice = 4294967295, next ->
+        vertice = 4294967295, next ->
+        vertice = 4294967295, next ->
+        vertice = 4294967295, next ->
+        vertice = 4294967295, next ->
+        vertice = 4294967295, next ->
+        vertice = 4294967295, next -> aux|NULL
+    ],
+    [
+        vertice = 1, next -> 
+        vertice = 2, next -> 
+        vertice = 3, next ->
+        vertice = 4, next -> 
+        vertice = 5, next -> 
+        vertice = 7, aux|next -> NULL
+    ],
+    [
+        vertice = 2, next ->
+        vertice = 4, next -> 
+        vertice = 5, next -> 
+        vertice = 6, next -> 
+        vertice = 8, next = NULL
+
+    ],
+    [
+        vertice = 3, next -> 
+        vertice = 4, next ->
+        vertice = 5, next ->
+        vertice = 6, next ->
+        vertice = 7, next -> NULL
+
+    ],
+    [
+        vertice = 4, next -> 
+        vertice = 5, next -> 
+        vertice = 6, next ->
+        vertice = 7, next -> 
+        vertice = 8, next -> NULL
+    ],
+    [
+        vertice = 5, next 
+        vertice = 7, next ->
+        vertice = 8, next -> NULL
+
+    ],
+    [
+        vertice = 6, next -> 
+        vertice = 7, next -> 
+        vertice = 8, next -> NULL
+    ],
+    [
+        vertice = 7, next
+        vertice = 8, next -> NULL
+    ],
+    [
+        vertice = 8, next -> NULL
+    ],
+}
+
+r = {1, 0, 0}
+n_rainha = 1
+
+noh = {
+    vertice = 5
+    next = NULL
+}

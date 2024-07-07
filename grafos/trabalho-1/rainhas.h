@@ -9,18 +9,23 @@ typedef struct casa {
   unsigned int linha, coluna;
 } casa;
 
+/* estrutura para as casas proibida */
 typedef struct noh_casa {
   casa casa_proibida;
   unsigned int n_casas, n_iteracoes;
   struct noh_casa *next, *prev;
 } noh_casa;
 
+/* estrutura para os vertices do grafo */
 typedef struct noh_grafo {
-  unsigned int vertice;
+  unsigned int vertice, coluna, linha;
   struct noh_grafo *next;
 } noh_grafo;
 
-
+typedef struct grafo {
+  unsigned int n_vertices, vertice_atual;
+  struct noh_grafo **nohs;
+} grafo;
 
 /*
  * @brief imprime o vetor de listas
