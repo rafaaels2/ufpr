@@ -18,7 +18,7 @@ typedef struct noh_casa {
 
 /* estrutura para os vertices do grafo */
 typedef struct noh_grafo {
-  unsigned int vertice, coluna, linha;
+  unsigned int vertice, coluna, linha, removido;
   struct noh_grafo *next;
 } noh_grafo;
 

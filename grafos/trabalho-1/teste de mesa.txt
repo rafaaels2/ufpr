@@ -1,68 +1,31 @@
-grafo = {
-    [
-        vertice = 4294967295, next ->
-        vertice = 4294967295, next ->
-        vertice = 4294967295, next ->
-        vertice = 4294967295, next ->
-        vertice = 4294967295, next ->
-        vertice = 4294967295, next ->
-        vertice = 4294967295, next -> aux|NULL
-    ],
-    [
-        vertice = 1, next -> 
-        vertice = 2, next -> 
-        vertice = 3, next ->
-        vertice = 4, next -> 
-        vertice = 5, next -> 
-        vertice = 7, aux|next -> NULL
-    ],
-    [
-        vertice = 2, next ->
-        vertice = 4, next -> 
-        vertice = 5, next -> 
-        vertice = 6, next -> 
-        vertice = 8, next = NULL
+chamada: 
+    linha = 0
+    n_vizinhos = 0
+    vizinhos = []
+    coluna = 1
 
-    ],
-    [
-        vertice = 3, next -> 
-        vertice = 4, next ->
-        vertice = 5, next ->
-        vertice = 6, next ->
-        vertice = 7, next -> NULL
+chamada: 
+    linha = 0
+    n_vizinhos = 0
+    vizinhos = []
+    coluna = 2
 
-    ],
-    [
-        vertice = 4, next -> 
-        vertice = 5, next -> 
-        vertice = 6, next ->
-        vertice = 7, next -> 
-        vertice = 8, next -> NULL
-    ],
-    [
-        vertice = 5, next 
-        vertice = 7, next ->
-        vertice = 8, next -> NULL
+chamada: 
+    linha = 2
+    n_vizinhos = 2
+    vizinhos = [8, 12]
+    coluna = 1
 
-    ],
-    [
-        vertice = 6, next -> 
-        vertice = 7, next -> 
-        vertice = 8, next -> NULL
-    ],
-    [
-        vertice = 7, next
-        vertice = 8, next -> NULL
-    ],
-    [
-        vertice = 8, next -> NULL
-    ],
-}
+chamada: 
+    linha = 3
+    n_vizinhos = 1
+    vizinhos = [14]
+    coluna = 3
 
-r = {1, 0, 0}
-n_rainha = 1
+n_rainhas = 4
+tabuleiro.n_vertices = 2
+tabuleiro.vertice_atual = 14
 
-noh = {
-    vertice = 5
-    next = NULL
-}
+ x |   | x  
+   | x |   
+ x |   | x  

@@ -245,7 +245,7 @@ unsigned int *rainhas_bt(unsigned int n, unsigned int k, casa *c, unsigned int *
 unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *r) {
     noh_grafo *aux, *noh;
     unsigned int linha = 0, coluna = 1, n_vizinhos = 0;
-    unsigned int *vizinhos = malloc ((2 * n) * sizeof (unsigned int));
+    unsigned int vizinhos[2 * n + 1];
     int diagonal_e, diagonal_d;
     
     if (init == 0) {
@@ -260,6 +260,8 @@ unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *
 
         tabuleiro.n_vertices = n * n;
         tabuleiro.vertice_atual = 0;
+        
+        proibidas[0] -> n_iteracoes++;
 
         for (unsigned int i = 0; i < (n * n); i++) {
             tabuleiro.nohs[i] = (noh_grafo *) malloc (sizeof (noh_grafo));
@@ -272,6 +274,7 @@ unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *
             tabuleiro.nohs[i] -> next = NULL;
             tabuleiro.nohs[i] -> coluna = coluna;
             tabuleiro.nohs[i] -> linha = linha;
+            tabuleiro.nohs[i] -> removido = 0;
 
             /* cria a lista na linha */
             aux = tabuleiro.nohs[i];
@@ -291,7 +294,7 @@ unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *
             
             diagonal_e = (int) coluna - 1;
             diagonal_d = (int) coluna + 1;
-            
+
             /* cria a lista nas linhas abaixo s*/
             for (unsigned int j = 1; j < (n - linha); j++) {
                 if (diagonal_e > 0) {
@@ -337,30 +340,44 @@ unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *
                 diagonal_e--;
                 diagonal_d++; 
             }
+            
+            if (eh_casa_proibida (proibidas, linha, coluna)) {
+                tabuleiro.nohs[i] -> removido = 1;
+                tabuleiro.n_vertices--;
+            }
 
             if (coluna == n) {
                 coluna = 0;
                 linha++;
+                if (linha != n)
+                    proibidas[linha] -> n_iteracoes++;
             }
             
             coluna++;
         }
         init = 1;
     }
-    
+
     linha = n_rainhas;
 
-    if (n_rainhas == n) 
+    if (n_rainhas == n) {
         return r;
-    
-    if (((n_rainhas + tabuleiro.n_vertices) < n) || linha != tabuleiro.nohs[tabuleiro.vertice_atual] -> linha)
+    }
+
+    if (((n_rainhas + tabuleiro.n_vertices) < n) || linha != tabuleiro.nohs[tabuleiro.vertice_atual] -> linha) {
         return nao;
+    }
+
+    while (tabuleiro.nohs[tabuleiro.vertice_atual] -> removido) {
+        tabuleiro.vertice_atual++;
+    }
     
+    /* remove do grafo C */
     aux = tabuleiro.nohs[tabuleiro.vertice_atual];
     while (aux != NULL) {
-        if (tabuleiro.nohs[aux -> vertice] -> vertice != 4294967295) {
+        if (!tabuleiro.nohs[aux -> vertice] -> removido) {
+            tabuleiro.nohs[aux -> vertice] -> removido = 1;
             vizinhos[n_vizinhos] = aux -> vertice;
-            tabuleiro.nohs[aux -> vertice] -> vertice = 4294967295;
             tabuleiro.n_vertices--;
             n_vizinhos++;
         }
@@ -368,37 +385,43 @@ unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *
         aux = aux -> next;
     }
     
+    /* adiciona a I */
     r[linha] = tabuleiro.nohs[tabuleiro.vertice_atual] -> coluna;
+    exit(0);
     n_rainhas++;
     
     /* encontra proximo vertice */
     coluna = tabuleiro.nohs[tabuleiro.vertice_atual] -> coluna;
-    for (unsigned int i = 0; i < n; i++) {
-        if (tabuleiro.nohs[tabuleiro.vertice_atual + (n - coluna + 1)  + i] -> vertice != 4294967295) {
-            tabuleiro.vertice_atual = tabuleiro.vertice_atual + (n - coluna + 1)  + i;
-            break;
+    if (linha != (n - 1)) {
+        for (unsigned int i = 0; i < n; i++) {
+            if (!tabuleiro.nohs[tabuleiro.vertice_atual + (n - coluna + 1)  + i] -> removido) {
+                tabuleiro.vertice_atual = tabuleiro.vertice_atual + (n - coluna + 1)  + i;
+                break;
+            }
         }
     }
 
     unsigned int *retorno = rainhas_ci (n, k, c, r);
 
     /* retorno bem sucedido */
-    if (retorno != nao) 
+    if (retorno != nao) {
         return r;
+    }
     
     /* retira a rainha do tabuleiro */
     r[linha] = 0;
     n_rainhas--;
-    tabuleiro.vertice_atual = vizinhos[1];
     for (unsigned int i = 0; i < n_vizinhos; i++) {
-        tabuleiro.nohs[vizinhos[i]] -> vertice = vizinhos[i];
+        tabuleiro.nohs[vizinhos[i]] -> removido = 0;
         tabuleiro.n_vertices++;
     }
-    
-    if (linha != tabuleiro.nohs[vizinhos[1]] -> linha) {
+
+    if (n_vizinhos > 1)  
+        tabuleiro.vertice_atual = vizinhos[1];
+
+    if (linha != tabuleiro.nohs[vizinhos[1]] -> linha || n_vizinhos == 1) {
         return nao;
     }
-
     
     return rainhas_ci (n, k, c, r);
 }
