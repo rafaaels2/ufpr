@@ -1,3 +1,5 @@
+// Rafael Goncalves dos Santos - GRR20211798
+
 #include "rainhas.h"
 #include <stdio.h>
 #include <stdlib.h>
