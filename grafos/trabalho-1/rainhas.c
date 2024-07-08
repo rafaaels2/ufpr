@@ -2,27 +2,69 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* estrutura para as casas proibida */
+typedef struct noh_casa {
+  casa casa_proibida;
+  unsigned int n_casas, n_iteracoes;
+  struct noh_casa *next, *prev;
+} noh_casa;
+
+/* estrutura para os vertices do grafo */
+typedef struct noh_grafo {
+  unsigned int vertice, coluna, linha, removido;
+  struct noh_grafo *next;
+} noh_grafo;
+
+/* estrutura para o grafo */
+typedef struct grafo {
+  unsigned int n_vertices, vertice_atual;
+  struct noh_grafo **nohs;
+} grafo;
+
 unsigned int n_rainhas = 0, init = 0, *nao;
 noh_casa **proibidas;
 grafo tabuleiro;
 
-void print_proibidas (noh_casa **casas, unsigned int n) {
-    noh_casa *aux;
-    printf ("\n# VETOR DE LISTAS\n");
-    for (unsigned int i = 0; i < n; i++) {
-        aux = casas[i];
-        printf ("# [%d] = ", i);
+/*
+ * @brief verifica se a casa eh proibida
+ *
+ * @param **casas vetor de listas
+ * @param linha valor da linha - 1
+ * @param coluna valor da coluna
+ * 
+ * @return 1 eh uma casa proibida
+ * @return 0 nao eh uma casa proibida
+*/
+int eh_casa_proibida (noh_casa **casas, unsigned int linha, unsigned int coluna);
 
-        while (aux -> next != NULL) {
-            printf ("c: %d", aux -> casa_proibida.coluna);
-            aux = aux -> next;
-            printf (" > ");
-        }
+/*
+ * @brief inicializa as estruturas das casas proibidas
+ *
+ * @param *c vetor das casas proibidas
+ * @param *r vetor resultado
+ * @param n numero de linhas do tabuleiro
+ * @param k numero de casas proibidas
+ * 
+ * @return *r
+*/
+unsigned int *inicializa (casa *c, unsigned int *r, unsigned int n, unsigned int k);
 
-        printf ("c: %d ", aux -> casa_proibida.coluna);
-        printf ("| n: %d\n", casas[i] -> n_casas);
-    }
-}
+/*
+ * @brief desaloca a memoria do vetor de listas
+ *
+ * @param n numero de linhas do tabuleiro
+*/
+void desaloca_memoria (unsigned int n);
+
+/*
+ * @brief inicializa as estruturas do grafo
+ *
+ * @param *r vetor resultado
+ * @param n numero de linhas do tabuleiro
+ * 
+ * @return *r
+*/
+unsigned int *inicializa_grafo (unsigned int *r, unsigned int n);
 
 int eh_casa_proibida (noh_casa **casas, unsigned int linha, unsigned int coluna) {
     noh_casa *aux = casas[linha];
@@ -138,6 +180,130 @@ void desaloca_memoria (unsigned int n) {
     free (proibidas);
 }
 
+unsigned int *inicializa_grafo (unsigned int *r, unsigned int n) {
+    noh_grafo *aux, *noh;
+    unsigned int linha = 0, coluna = 1;
+    int diagonal_e, diagonal_d;
+
+    /* aloca vetor de listas */
+    tabuleiro.nohs = (noh_grafo **) malloc ((n * n) * sizeof (noh_grafo *));
+    if (tabuleiro.nohs == NULL) {
+        fprintf (stderr, "# erro ao alocar vetor\n");
+        return r;
+    }
+    
+    /* inicializa informacoes do grafo */
+    tabuleiro.n_vertices = n * n;
+    tabuleiro.vertice_atual = 0;
+    
+    /* inicializa informacoes do vetor de proibidas */
+    proibidas[0] -> n_iteracoes++;
+    
+    /* laco entre todos os vertices do grafo */
+    for (unsigned int i = 0; i < (n * n); i++) {
+        /* aloca vertice */
+        tabuleiro.nohs[i] = (noh_grafo *) malloc (sizeof (noh_grafo));
+        if (tabuleiro.nohs[i] == NULL) {
+            fprintf (stderr, "# erro ao alocar noh\n");
+            return r;
+        }
+        
+        /* inicaliza o vertice */
+        tabuleiro.nohs[i] -> vertice = i;
+        tabuleiro.nohs[i] -> next = NULL;
+        tabuleiro.nohs[i] -> coluna = coluna;
+        tabuleiro.nohs[i] -> linha = linha;
+        tabuleiro.nohs[i] -> removido = 0;
+        
+        /* inicializa a lista de vizinhos (arcos) */
+
+        /* vizinhos da mesma linha */
+        aux = tabuleiro.nohs[i];
+        for (unsigned int j = 0; j < (n - coluna); j++) {
+            noh = (noh_grafo *) malloc (sizeof (noh_grafo));
+            if (noh == NULL) {
+                fprintf (stderr, "# erro ao alocar noh\n");
+                return r;
+            }
+            
+            noh -> vertice = tabuleiro.nohs[i] -> vertice + j + 1;
+            noh -> next = NULL;
+
+            aux -> next = noh;
+            aux = aux -> next;
+        }
+        
+        diagonal_e = (int) coluna - 1;
+        diagonal_d = (int) coluna + 1;
+
+        /* vizinhos das linhas abaixo */
+        for (unsigned int j = 1; j < (n - linha); j++) {
+            /* caso a rainha ataque na diagonal esquerda */
+            if (diagonal_e > 0) {
+                noh = (noh_grafo *) malloc (sizeof (noh_grafo));
+                if (noh == NULL) {
+                    fprintf (stderr, "# erro ao alocar noh\n");
+                    return r;
+                }
+
+                noh -> vertice = tabuleiro.nohs[i] -> vertice + (n - 1) * j;
+                noh -> next = NULL;
+
+                aux -> next = noh;
+                aux = aux -> next;
+            }   
+            
+            /* rainha ataca abaixo */
+            noh = (noh_grafo *) malloc (sizeof (noh_grafo));
+            if (noh == NULL) {
+                fprintf (stderr, "# erro ao alocar noh\n");
+                return r;
+            }
+
+            noh -> vertice = tabuleiro.nohs[i] -> vertice + n * j;
+            noh -> next = NULL;
+
+            aux -> next = noh;
+            aux = aux -> next;
+            
+            /* caso a rainha ataque na diagonal direita */
+            if (diagonal_d <= (int) n) {
+                noh = (noh_grafo *) malloc (sizeof (noh_grafo));
+                if (noh == NULL) {
+                    fprintf (stderr, "# erro ao alocar noh\n");
+                    return r;
+                }
+
+                noh -> vertice = tabuleiro.nohs[i] -> vertice + (n + 1) * j;
+                noh -> next = NULL;
+
+                aux -> next = noh;
+                aux = aux -> next;
+            }
+
+            diagonal_e--;
+            diagonal_d++; 
+        }
+        
+        /* verifica se o vertice eh uma casa proibida */
+        if (eh_casa_proibida (proibidas, linha, coluna)) {
+            tabuleiro.nohs[i] -> removido = 1;
+            tabuleiro.n_vertices--;
+        }
+        
+        /* reajusta a coluna e a linha*/
+        if (coluna == n) {
+            coluna = 0;
+            linha++;
+            if (linha != n)
+                proibidas[linha] -> n_iteracoes++;
+        }
+        
+        coluna++;
+    }
+
+    return r;
+}
 //------------------------------------------------------------------------------
 // computa uma resposta para a instância (n,c) do problema das n rainhas 
 // com casas proibidas usando backtracking
@@ -243,138 +409,55 @@ unsigned int *rainhas_bt(unsigned int n, unsigned int k, casa *c, unsigned int *
 // n, c e r são como em rainhas_bt()
 
 unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *r) {
-    noh_grafo *aux, *noh;
+    noh_grafo *aux;
     unsigned int linha = 0, coluna = 1, n_vizinhos = 0;
-    unsigned int vizinhos[2 * n + 1];
-    int diagonal_e, diagonal_d;
+    unsigned int *vizinhos = (unsigned int *) malloc ((3 * n) * sizeof (unsigned int));
     
+    /*
+    * Grafo C = tabuleiro
+    * Grafo I = r
+    */
+
+    /* inicializacao */
     if (init == 0) {
         inicializa (c, r, n, k);
 
-        /* aloca vetor de listas */
-        tabuleiro.nohs = (noh_grafo **) malloc ((n * n) * sizeof (noh_grafo *));
-        if (tabuleiro.nohs == NULL) {
-            fprintf (stderr, "# erro ao alocar vetor\n");
-            return r;
-        }
+        inicializa_grafo (r, n);
 
-        tabuleiro.n_vertices = n * n;
-        tabuleiro.vertice_atual = 0;
-        
-        proibidas[0] -> n_iteracoes++;
+        desaloca_memoria (n);
 
-        for (unsigned int i = 0; i < (n * n); i++) {
-            tabuleiro.nohs[i] = (noh_grafo *) malloc (sizeof (noh_grafo));
-            if (tabuleiro.nohs[i] == NULL) {
-                fprintf (stderr, "# erro ao alocar noh\n");
-                return r;
-            }
-            
-            tabuleiro.nohs[i] -> vertice = i;
-            tabuleiro.nohs[i] -> next = NULL;
-            tabuleiro.nohs[i] -> coluna = coluna;
-            tabuleiro.nohs[i] -> linha = linha;
-            tabuleiro.nohs[i] -> removido = 0;
-
-            /* cria a lista na linha */
-            aux = tabuleiro.nohs[i];
-            for (unsigned int j = 0; j < (n - coluna); j++) {
-                noh = (noh_grafo *) malloc (sizeof (noh_grafo));
-                if (noh == NULL) {
-                    fprintf (stderr, "# erro ao alocar noh\n");
-                    return r;
-                }
-                
-                noh -> vertice = tabuleiro.nohs[i] -> vertice + j + 1;
-                noh -> next = NULL;
-
-                aux -> next = noh;
-                aux = aux -> next;
-            }
-            
-            diagonal_e = (int) coluna - 1;
-            diagonal_d = (int) coluna + 1;
-
-            /* cria a lista nas linhas abaixo s*/
-            for (unsigned int j = 1; j < (n - linha); j++) {
-                if (diagonal_e > 0) {
-                    noh = (noh_grafo *) malloc (sizeof (noh_grafo));
-                    if (noh == NULL) {
-                        fprintf (stderr, "# erro ao alocar noh\n");
-                        return r;
-                    }
-
-                    noh -> vertice = tabuleiro.nohs[i] -> vertice + (n - 1) * j;
-                    noh -> next = NULL;
-
-                    aux -> next = noh;
-                    aux = aux -> next;
-                }   
-
-                noh = (noh_grafo *) malloc (sizeof (noh_grafo));
-                if (noh == NULL) {
-                    fprintf (stderr, "# erro ao alocar noh\n");
-                    return r;
-                }
-
-                noh -> vertice = tabuleiro.nohs[i] -> vertice + n * j;
-                noh -> next = NULL;
-
-                aux -> next = noh;
-                aux = aux -> next;
-
-                if (diagonal_d <= (int) n) {
-                    noh = (noh_grafo *) malloc (sizeof (noh_grafo));
-                    if (noh == NULL) {
-                        fprintf (stderr, "# erro ao alocar noh\n");
-                        return r;
-                    }
-
-                    noh -> vertice = tabuleiro.nohs[i] -> vertice + (n + 1) * j;
-                    noh -> next = NULL;
-
-                    aux -> next = noh;
-                    aux = aux -> next;
-                }
-
-                diagonal_e--;
-                diagonal_d++; 
-            }
-            
-            if (eh_casa_proibida (proibidas, linha, coluna)) {
-                tabuleiro.nohs[i] -> removido = 1;
-                tabuleiro.n_vertices--;
-            }
-
-            if (coluna == n) {
-                coluna = 0;
-                linha++;
-                if (linha != n)
-                    proibidas[linha] -> n_iteracoes++;
-            }
-            
-            coluna++;
-        }
         init = 1;
     }
-
-    linha = n_rainhas;
-
-    if (n_rainhas == n) {
-        return r;
-    }
-
-    if (((n_rainhas + tabuleiro.n_vertices) < n) || linha != tabuleiro.nohs[tabuleiro.vertice_atual] -> linha) {
-        return nao;
-    }
-
-    while (tabuleiro.nohs[tabuleiro.vertice_atual] -> removido) {
-        tabuleiro.vertice_atual++;
-    }
     
-    /* remove do grafo C */
+    /* 
+     * linha a ser avaliada 
+     * linha 0 = linha 1 e consequentemente... 
+    */
+    linha = n_rainhas;
+    
+    /* 
+     * condicao de sucesso 
+     * |I| = n
+    */
+    if (n_rainhas == n) 
+        return r;
+        
+    /* 
+     * retorno mal sucedido
+     * |I| + |C| < n
+     * ou caso a linha que esta sendo avaliada nao seja a proxima 
+     */
+    if (((n_rainhas + tabuleiro.n_vertices) < n) || linha != tabuleiro.nohs[tabuleiro.vertice_atual] -> linha) 
+        return nao;
+    
+    /* procura vertice que pertence a C */
+    while (tabuleiro.nohs[tabuleiro.vertice_atual] -> removido) 
+        tabuleiro.vertice_atual++;
+    
+    /* remove o vertice e seus vizinhos de C */
     aux = tabuleiro.nohs[tabuleiro.vertice_atual];
     while (aux != NULL) {
+        /* verifica se o vertice ja foi removido */
         if (!tabuleiro.nohs[aux -> vertice] -> removido) {
             tabuleiro.nohs[aux -> vertice] -> removido = 1;
             vizinhos[n_vizinhos] = aux -> vertice;
@@ -385,12 +468,11 @@ unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *
         aux = aux -> next;
     }
     
-    /* adiciona a I */
+    /* adiciona o vertice a I */
     r[linha] = tabuleiro.nohs[tabuleiro.vertice_atual] -> coluna;
-    exit(0);
     n_rainhas++;
     
-    /* encontra proximo vertice */
+    /* encontra proximo vertice a ser avaliado */
     coluna = tabuleiro.nohs[tabuleiro.vertice_atual] -> coluna;
     if (linha != (n - 1)) {
         for (unsigned int i = 0; i < n; i++) {
@@ -400,28 +482,43 @@ unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *
             }
         }
     }
-
+    
+    /* 
+    * Grafo I (r) com o vertice adicionado
+    * Grafo C (tabuleiro) sem o vertice e seus vizinhos
+    */
     unsigned int *retorno = rainhas_ci (n, k, c, r);
 
     /* retorno bem sucedido */
-    if (retorno != nao) {
+    if (retorno != nao) 
         return r;
-    }
     
     /* retira a rainha do tabuleiro */
     r[linha] = 0;
     n_rainhas--;
+
+    /* recoloca o vertice e seus vizinhos no tabuleiro */
     for (unsigned int i = 0; i < n_vizinhos; i++) {
         tabuleiro.nohs[vizinhos[i]] -> removido = 0;
         tabuleiro.n_vertices++;
     }
-
+    
+    /* avalia o proximo vertice */
     if (n_vizinhos > 1)  
         tabuleiro.vertice_atual = vizinhos[1];
-
+    
+    /* 
+     * retorno mal sucedido
+     * caso a linha que esta sendo avaliada nao seja a proxima 
+     * ou nao existam vizinhoh a serem avaliados
+     */
     if (linha != tabuleiro.nohs[vizinhos[1]] -> linha || n_vizinhos == 1) {
         return nao;
     }
     
+    /* 
+    * Grafo I (r) sem o vertice adicionado
+    * Grafo C (tabuleiro) com o vertice e seus vizinhos
+    */
     return rainhas_ci (n, k, c, r);
 }
