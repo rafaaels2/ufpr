@@ -34,7 +34,8 @@ CFLAGS  = $(COMMON_FLAGS) \
 	  -Wnested-externs \
 	  -Wold-style-definition \
 	  -Wstrict-prototypes \
-	  -Wwrite-strings
+	  -Wwrite-strings \
+	  -g
 
 CPPFLAGS = $(COMMON_FLAGS)
 

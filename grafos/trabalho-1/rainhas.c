@@ -413,7 +413,7 @@ unsigned int *rainhas_bt(unsigned int n, unsigned int k, casa *c, unsigned int *
 unsigned int *rainhas_ci(unsigned int n, unsigned int k, casa *c, unsigned int *r) {
     noh_grafo *aux;
     unsigned int linha = 0, coluna = 1, n_vizinhos = 0;
-    unsigned int *vizinhos = (unsigned int *) malloc ((3 * n) * sizeof (unsigned int));
+    unsigned int *vizinhos = (unsigned int *) malloc ((n * n) * sizeof (unsigned int));
     
     /*
     * Grafo C = tabuleiro
