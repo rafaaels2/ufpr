@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    table, th, td {
+        border:1px solid black;
+    }
+    body {
+        font-family:Georgia, 'Times New Roman', Times, serif;
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+    }
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+    }
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    .close:hover, .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+        }
+</style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alunos</title>
+</head>
+<body>
+    <h1>Grade Currícular 2011</h1>
+    <input type="text" id="grr-input" placeholder="GRR">
+    <button id="grr-btn">Buscar</button>
+    <table style="width:100%">
+        <th colspan="8">Períodos Semestrias do Curso</th>
+        <tr>
+            <th>1º</th>
+            <th>2º</th>
+            <th>3º</th>
+            <th>4º</th>
+            <th>5º</th>
+            <th>6º</th>
+            <th>7º</th>
+            <th>8º</th>
+        </tr>
+        <tr>
+            <td id="CI068" onclick="mostrarModal ('CI068')" oncontextmenu="mostrarModal2('CI068')">CI068</td>
+            <td id="CI210" onclick="mostrarModal ('CI210')" oncontextmenu="mostrarModal2('CI210')">CI210</td>
+            <td id="CI212" onclick="mostrarModal ('CI212')" oncontextmenu="mostrarModal2('CI212')">CI212</td>
+            <td id="CI215" onclick="mostrarModal ('CI215')" oncontextmenu="mostrarModal2('CI215')">CI215</td>
+            <td id="CI162" onclick="mostrarModal ('CI162')" oncontextmenu="mostrarModal2('CI162')">CI162</td>
+            <td id="CI163" onclick="mostrarModal ('CI163')" oncontextmenu="mostrarModal2('CI163')">CI163</td>
+            <td id="CI221" onclick="mostrarModal ('CI221')" oncontextmenu="mostrarModal2('CI221')">CI221</td>
+            <td id="SE045" onclick="mostrarModal ('SE045')" oncontextmenu="mostrarModal2('SE045')">SE045</td>
+        </tr>
+        <tr>
+            <td id="CI055" onclick="mostrarModal ('CI055')" oncontextmenu="mostrarModal2('CI055')">CI055</td>
+            <td id="CI056" onclick="mostrarModal ('CI056')" oncontextmenu="mostrarModal2('CI056')">CI056</td>
+            <td id="CI057" onclick="mostrarModal ('CI057')" oncontextmenu="mostrarModal2('CI057')">CI057</td>
+            <td id="CI062" onclick="mostrarModal ('CI062')" oncontextmenu="mostrarModal2('CI062')">CI062</td>
+            <td id="CI065" onclick="mostrarModal ('CI065')" oncontextmenu="mostrarModal2('CI065')">CI065</td>
+            <td id="CI165" onclick="mostrarModal ('CI165')" oncontextmenu="mostrarModal2('CI165')">CI165</td>
+            <td id="CI211" onclick="mostrarModal ('CI211')" oncontextmenu="mostrarModal2('CI211')">CI211</td>
+            <td id="SC003" onclick="mostrarModal ('SC003')" oncontextmenu="mostrarModal2('SC003')">SC003</td>
+        </tr>
+        <tr>
+            <td id="CM046" onclick="mostrarModal ('CM046')" oncontextmenu="mostrarModal2('CM046')">CM046</td>
+            <td id="CI067" onclick="mostrarModal ('CI067')" oncontextmenu="mostrarModal2('CI067')">CI067</td>
+            <td id="CI064" onclick="mostrarModal ('CI064')" oncontextmenu="mostrarModal2('CI064')">CI064</td>
+            <td id="CE003" onclick="mostrarModal ('CE003')" oncontextmenu="mostrarModal2('CE003')">CE003</td>
+            <td id="CI059" onclick="mostrarModal ('CI059')" oncontextmenu="mostrarModal2('CI059')">CI059</td>
+            <td id="CI209" onclick="mostrarModal ('CI209')" oncontextmenu="mostrarModal2('CI209')">CI209</td>
+            <td id="CI205" onclick="mostrarModal ('CI205')" oncontextmenu="mostrarModal2('CI205')">CI205</td>
+            <td id="CI340" onclick="mostrarModal ('CI340')" oncontextmenu="mostrarModal2('CI340')">CI340</td>
+        </tr>
+        <tr>
+            <td id="CM045" onclick="mostrarModal ('CM045')" oncontextmenu="mostrarModal2('CM045')">CM045</td>
+            <td id="CM005" onclick="mostrarModal ('CM005')" oncontextmenu="mostrarModal2('CM005')">CM005</td>
+            <td id="CI237" onclick="mostrarModal ('CI237')" oncontextmenu="mostrarModal2('CI237')">CI237</td>
+            <td id="CI058" onclick="mostrarModal ('CI058')" oncontextmenu="mostrarModal2('CI058')">CI058</td>
+            <td id="CI061" onclick="mostrarModal ('CI061')" oncontextmenu="mostrarModal2('CI061')">CI061</td>
+            <td id="CI218" onclick="mostrarModal ('CI218')" oncontextmenu="mostrarModal2('CI218')">CI218</td>
+            <td id="CI351" onclick="mostrarModal ('CI351')" oncontextmenu="mostrarModal2('CI351')">CI351</td>
+            <td id="CI310" onclick="mostrarModal ('CI310')" oncontextmenu="mostrarModal2('CI310')">CI310</td>
+        </tr>
+        <tr>
+            <td id="CM201" onclick="mostrarModal ('CM201')" oncontextmenu="mostrarModal2('CM201')">CM201</td>
+            <td id="CM202" onclick="mostrarModal ('CM202')" oncontextmenu="mostrarModal2('CM202')">CM202</td>
+            <td id="CI166" onclick="mostrarModal ('CI166')" oncontextmenu="mostrarModal2('CI166')">CI166</td>
+            <td id="CI164" onclick="mostrarModal ('CI164')" oncontextmenu="mostrarModal2('CI164')">CI164</td>
+            <td id="SA214" onclick="mostrarModal ('SA214')" oncontextmenu="mostrarModal2('SA214')">SA214</td>
+            <td id="CI220" onclick="mostrarModal ('CI220')" oncontextmenu="mostrarModal2('CI220')">CI220</td>
+            <td id="CI206" onclick="mostrarModal ('CI206')" oncontextmenu="mostrarModal2('CI206')">CI206</td>
+            <td id="SC202" onclick="mostrarModal ('SC202')" oncontextmenu="mostrarModal2('SC202')">SC202</td>
+        </tr>
+    </table>
+
+    <div id="meuModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2 id="tituloModal">Título do Modal</h2>
+            <p id="textoModal">Conteúdo do modal vai aqui.</p>
+        </div>
+    </div>
+
+    <div id="meuModal2" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal2()">&times;</span>
+            <h2 id="tituloModal2">Título do Modal</h2>
+            <p id="textoModal2"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
