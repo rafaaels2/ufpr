@@ -20,7 +20,7 @@
 #include "carta.h"
 
 #define N 4
-#define IP_ADRESS "192.168.0.166"
+#define IP_ADRESS "127.0.0.1"
 #define BUFFER_SIZE 1024
 
 int main (int argc, char **argv) {
