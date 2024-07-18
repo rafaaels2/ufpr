@@ -1,0 +1,34 @@
+package
+package.remetente = 0;
+package.destinatario = 2;
+package.recebido = 0;
+package.lido = 0;
+package.message = "# bastao chegou"
+
+0
+    # pacote enviado
+    ...
+    # pacote recebido
+    # mensagem voltou
+    # deu certo
+
+1
+    ...
+    # pacote recebido
+    # destino errado
+    # pacote enviado
+    ...
+
+2 
+    ...
+    # pacote recebido
+    # bastao chegou
+    # pacote enviado
+    ...
+
+3
+    ...
+    # pacote recebido
+    # destino errado
+    # pacote enviado
+    ...
