@@ -2,8 +2,8 @@
 
 CFLAGS = -Wall -g
 DEBUG_CFLAGS = -DDEBUG
-objects = carta.o socket.o
-test_files = jogo.c 
+objects = game.o 
+test_files = fodinha.c 
 test_executables = $(test_files:.c=)
 
 all: $(test_executables)
@@ -11,11 +11,8 @@ all: $(test_executables)
 %: %.c $(objects)
 	gcc $< $(objects) -o $@ $(CFLAGS)
 
-carta.o: carta.c
-	gcc -c carta.c -o $@ $(CFLAGS)
-
-socket.o: socket.c
-	gcc -c socket.c -o $@ $(CFLAGS)
+game.o: game.c
+	gcc -c game.c -o $@ $(CFLAGS)
 
 # compilação para debug
 debug: CFLAGS += $(DEBUG_CFLAGS)
