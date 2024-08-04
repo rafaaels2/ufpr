@@ -64,13 +64,12 @@ int recv_msg (frame_t *frame, info_t *info, int addr) {
               &src_addr, &src_len);
 
     /* problema ao receber pacote */
-    if (n < 0) {
+    /* if (n < 0) {
         int i = 0;
 
-        /* marca a mensagem como nao recebida */
         while (frame -> recv[i] != -1) i++;
         frame -> recv[i] = 0;
-    }
+    } */
 
     // sleep (1);
 
@@ -100,7 +99,7 @@ int recv_msg (frame_t *frame, info_t *info, int addr) {
         }
 
         /* verifica se a mensagem eh para o jogador atual */
-        else if (verify_dest (frame -> dest, addr) || n >= 0) {
+        else if (verify_dest (frame -> dest, addr) /* || n >= 0 */) {
             int i = 0;
 
             /* marca a mensagem como recebida */
@@ -590,6 +589,12 @@ void run_game (frame_t * frame, info_t *info, int shackle, int addr) {
                 printf ("\nqual carta (indice): ");
                 fgets (buffer, sizeof (buffer), stdin);
                 printf ("\n");
+
+                while (cards[atoi (buffer)].value == -1) {
+                    printf ("\nqual carta (indice): ");
+                    fgets (buffer, sizeof (buffer), stdin);
+                    printf ("\n");
+                }
 
                 /* coloca a jogada no vetor de cartas */
                 frame -> data.round.cards[addr] = cards[atoi (buffer)];
