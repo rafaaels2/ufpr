@@ -175,7 +175,7 @@ card_t get_card (card_t *used);
  * @return 1, card_2 eh maior
  * @return 0, card_1 eh maior
  */
-int cmp_card (card_t *card_1, card_t card_2, int shackle);
+int cmp_card (card_t card_1, card_t card_2, int shackle);
 
 /*
  * @brief sorteia e distruibui as cartas para os jogadores

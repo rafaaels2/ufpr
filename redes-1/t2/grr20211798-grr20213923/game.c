@@ -44,7 +44,7 @@ int verify_dest (int *dest, int addr) {
 }
 
 int recv_msg (frame_t *frame, info_t *info, int addr) {
-    int sockfd, n;
+    int sockfd;
     struct sockaddr_in dest_addr, src_addr;
     socklen_t src_len = sizeof (src_addr);
     
@@ -60,7 +60,7 @@ int recv_msg (frame_t *frame, info_t *info, int addr) {
     bind (sockfd, (struct sockaddr *) &dest_addr, sizeof (dest_addr));
     
     /* recebe a mensagem */
-    n = recvfrom (sockfd, frame, sizeof (*frame), 0, (struct sockaddr *) 
+    recvfrom (sockfd, frame, sizeof (*frame), 0, (struct sockaddr *) 
               &src_addr, &src_len);
 
     /* problema ao receber pacote */
@@ -193,7 +193,7 @@ int recv_msg (frame_t *frame, info_t *info, int addr) {
                     printf ("\n");
 
                     /* caso jogador digite uma carta nao possivel */
-                    while (cards[atoi (buffer)].value == -1) {
+                    while (cards[atoi (buffer)].value == -1 || atoi (buffer) >= (MAX_CARDS - 1)) {
                         printf ("\nqual carta (indice): ");
                         fgets (buffer, sizeof (buffer), stdin);
                         printf ("\n");
@@ -319,20 +319,17 @@ card_t get_card (card_t *used) {
     return card;
 }
 
-int cmp_card (card_t *card_1, card_t card_2, int shackle) {
+int cmp_card (card_t card_1, card_t card_2, int shackle) {
     /* compara cartas iguais */
-    if (card_1 -> value == card_2.value && card_1 -> suit < card_2.suit) 
-        *card_1 = card_2;
+    if (card_1.value == card_2.value && card_1.suit < card_2.suit) 
+        return 1;
 
     /* verifica se eh manilha */
     else if (card_2.value == shackle)
-        *card_1 = card_2;
+        return 1;
 
     /* compara os valores das cartas */
-    else if (card_1 -> value < card_2.value && card_1 -> value != shackle) 
-        *card_1 = card_2;
-    
-    if (card_1 -> value == card_2.value && card_1 -> suit == card_2.suit)
+    else if (card_1.value < card_2.value && card_1.value != shackle) 
         return 1;
     
     return 0;
@@ -503,6 +500,8 @@ void get_bets (frame_t *frame, info_t *info, int addr) {
         /* soma valor das apostas */
         sum = frame -> data.bet.bets[0] + frame -> data.bet.bets[1] + 
               frame -> data.bet.bets[2] + frame -> data.bet.bets[3];
+
+        frame -> data.bet.n_bets = 0;
     }
 
     /* informa as apostas feitas */
@@ -520,8 +519,10 @@ int get_winner (frame_t *frame, info_t *info, int shackle) {
 
     /* laco entre todas as jogadas */
     for (int i = 1; i < N; i++) {
-        if (cmp_card (&grt_card, frame -> data.round.cards[i], shackle))
+        if (cmp_card (grt_card, frame -> data.round.cards[i], shackle)) {
             gtr_addr = i;
+            grt_card = frame -> data.round.cards[i];
+        }
     }
 
     return gtr_addr;
@@ -590,7 +591,7 @@ void run_game (frame_t * frame, info_t *info, int shackle, int addr) {
                 fgets (buffer, sizeof (buffer), stdin);
                 printf ("\n");
 
-                while (cards[atoi (buffer)].value == -1) {
+                while (cards[atoi (buffer)].value == -1 || atoi (buffer) >= (MAX_CARDS - 1)) {
                     printf ("\nqual carta (indice): ");
                     fgets (buffer, sizeof (buffer), stdin);
                     printf ("\n");
