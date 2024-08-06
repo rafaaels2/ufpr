@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Listagem de Dados</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Pessoas</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>RG</th>
+            <th>Nome</th>
+            <th>Idade</th>
+            <th>Cidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @pessoas.each do |pessoa| %>
+            <tr>
+              <td><%= pessoa.rg %></td>
+              <td><%= pessoa.nome %></td>
+              <td><%= pessoa.idade %></td>
+              <td><%= pessoa.cidade %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h1>Carros</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>CRV</th>
+            <th>Nome</th>
+            <th>Marca</th>
+            <th>Pessoa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @carros.each do |carro| %>
+            <tr>
+              <td><%= carro.crv %></td>
+              <td><%= carro.nome %></td>
+              <td><%= carro.marca %></td>
+              <td><%= carro.pessoa.nome %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h1>Computadores</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Número de Série</th>
+            <th>Marca</th>
+            <th>Pessoa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @computadors.each do |computador| %>
+            <tr>
+              <td><%= computador.numserie %></td>
+              <td><%= computador.marca %></td>
+              <td><%= computador.pessoa.nome %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h1>Disciplinas</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Nome</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @disciplinas.each do |disciplina| %>
+            <tr>
+              <td><%= disciplina.codigo %></td>
+              <td><%= disciplina.nome %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h1>DisPes</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Disciplina</th>
+            <th>Pessoa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @dis_pes.each do |dis_pe| %>
+            <tr>
+              <td><%= dis_pe.disciplina.nome %></td>
+              <td><%= dis_pe.pessoa.nome %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+

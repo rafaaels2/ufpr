@@ -1,0 +1,41 @@
+<h1>Criar Pessoa e Carro</h1>
+
+<%= form_with model: @pessoa, url: admin_pessoas_path, local: true do |form| %>
+  <h2>Dados da Pessoa</h2>
+  <div>
+    <%= form.label :rg %>
+    <%= form.text_field :rg, required: true %>
+  </div>
+  <div>
+    <%= form.label :nome %>
+    <%= form.text_field :nome, required: true %>
+  </div>
+  <div>
+    <%= form.label :idade %>
+    <%= form.number_field :idade, required: true %>
+  </div>
+  <div>
+    <%= form.label :cidade %>
+    <%= form.text_field :cidade, required: true %>
+  </div>
+
+  <h2>Dados do Carro</h2>
+  <%= form.fields_for :carro do |carro_form| %>
+    <div>
+      <%= carro_form.label :crv %>
+      <%= carro_form.text_field :crv, required: true %>
+    </div>
+    <div>
+      <%= carro_form.label :nome %>
+      <%= carro_form.text_field :nome, required: true %>
+    </div>
+    <div>
+      <%= carro_form.label :marca %>
+      <%= carro_form.text_field :marca, required: true %>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.submit 'Criar Pessoa e Carro' %>
+  </div>
+<% end %>
