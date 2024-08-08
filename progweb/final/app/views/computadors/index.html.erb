@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Computadors</h1>
+
+<div id="computadors">
+  <% @computadors.each do |computador| %>
+    <%= render computador %>
+    <p>
+      <%= link_to "Show this computador", computador %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New computador", new_computador_path %>

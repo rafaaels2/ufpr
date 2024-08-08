@@ -1,4 +1,8 @@
 class Admin::CarrosController < ApplicationController
+  def index
+    @carros = Carro.all
+  end
+
   def new
     @carro = Carro.new
   end
@@ -6,7 +10,7 @@ class Admin::CarrosController < ApplicationController
   def create
     @carro = Carro.new(carro_params)
     if @carro.save
-      redirect_to admin_view_path, notice: 'Carro criado com sucesso.'
+      redirect_to admin_carros_path, notice: 'Carro foi criado com sucesso.'
     else
       render :new
     end
@@ -19,7 +23,7 @@ class Admin::CarrosController < ApplicationController
   def update
     @carro = Carro.find(params[:id])
     if @carro.update(carro_params)
-      redirect_to admin_view_path, notice: 'Carro atualizado com sucesso.'
+      redirect_to admin_carros_path, notice: 'Carro foi atualizado com sucesso.'
     else
       render :edit
     end
@@ -28,7 +32,7 @@ class Admin::CarrosController < ApplicationController
   def destroy
     @carro = Carro.find(params[:id])
     @carro.destroy
-    redirect_to admin_view_path, notice: 'Carro excluído com sucesso.'
+    redirect_to admin_carros_path, notice: 'Carro foi excluído com sucesso.'
   end
 
   private

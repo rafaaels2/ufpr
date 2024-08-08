@@ -1,7 +1,82 @@
-<h1>Criar Pessoa e Carro</h1>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+
+  h1, h2, h3 {
+    text-align: center;
+    color: #333;
+  }
+
+  form {
+    width: 50%;
+    margin: 0 auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  table th, table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  table th {
+    background-color: #f2f2f2;
+  }
+
+  table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  table tr:hover {
+    background-color: #f1f1f1;
+  }
+
+  div {
+    margin-bottom: 10px;
+  }
+
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  input[type="submit"]:hover {
+    background-color: #555;
+  }
+</style>
+
+<h1>Administração</h1>
+
+<h2>Criar Pessoa e Carro</h2>
 
 <%= form_with model: @pessoa, url: admin_pessoas_path, local: true do |form| %>
-  <h2>Dados da Pessoa</h2>
+  <h3>Dados da Pessoa</h3>
   <div>
     <%= form.label :rg %>
     <%= form.text_field :rg, required: true %>
@@ -19,7 +94,7 @@
     <%= form.text_field :cidade, required: true %>
   </div>
 
-  <h2>Dados do Carro</h2>
+  <h3>Dados do Carro</h3>
   <%= form.fields_for :carro do |carro_form| %>
     <div>
       <%= carro_form.label :crv %>
@@ -39,3 +114,37 @@
     <%= form.submit 'Criar Pessoa e Carro' %>
   </div>
 <% end %>
+
+<h2>Listagem de Pessoas e Carros</h2>
+<table>
+  <thead>
+    <tr>
+      <th>RG</th>
+      <th>Nome</th>
+      <th>Idade</th>
+      <th>Cidade</th>
+      <th>Carro CRV</th>
+      <th>Carro Nome</th>
+      <th>Carro Marca</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @pessoas.each do |pessoa| %>
+      <tr>
+        <td><%= pessoa.rg %></td>
+        <td><%= pessoa.nome %></td>
+        <td><%= pessoa.idade %></td>
+        <td><%= pessoa.cidade %></td>
+        <td><%= pessoa.carro.present? ? pessoa.carro.crv : '' %></td>
+        <td><%= pessoa.carro.present? ? pessoa.carro.nome : '' %></td>
+        <td><%= pessoa.carro.present? ? pessoa.carro.marca : '' %></td>
+        <td>
+          <%= link_to 'Editar', edit_admin_pessoa_path(pessoa) %>
+          <%= link_to 'Excluir', admin_pessoa_path(pessoa), method: :delete, data: { confirm: 'Você tem certeza?' } %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+

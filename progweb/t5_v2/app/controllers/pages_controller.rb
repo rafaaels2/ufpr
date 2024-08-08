@@ -9,10 +9,9 @@ class PagesController < ApplicationController
   
   def admin_view
     @pessoa = Pessoa.new
-    @carro = Carro.new
-    @computador = Computador.new
-    @disciplina = Disciplina.new
-    @dis_pe = DisPe.new
+    @pessoa.build_carro
+    @pessoas = Pessoa.all
   end
+
 end
 

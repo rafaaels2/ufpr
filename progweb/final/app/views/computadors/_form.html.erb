@@ -1,0 +1,32 @@
+<%= form_with(model: computador) do |form| %>
+  <% if computador.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(computador.errors.count, "error") %> prohibited this computador from being saved:</h2>
+
+      <ul>
+        <% computador.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :numserie, style: "display: block" %>
+    <%= form.text_field :numserie %>
+  </div>
+
+  <div>
+    <%= form.label :marca, style: "display: block" %>
+    <%= form.text_field :marca %>
+  </div>
+
+  <div>
+    <%= form.label :pessoa_id, style: "display: block" %>
+    <%= form.text_field :pessoa_id %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
