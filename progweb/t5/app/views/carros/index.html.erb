@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carros</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      width: 200px;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+
+    .notice {
+      color: green;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .new-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .new-link:hover {
+      background-color: #0056b3;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #6c757d;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .back-link:hover {
+      background-color: #5a6268;
+    }
+    
+    .card-title {
+      margin: 0;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .card-info {
+      margin: 10px 0 0 0;
+      font-size: 16px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p class="notice"><%= notice %></p>
+
+    <h1>Carros</h1>
+
+    <div id="carros">
+      <% @carros.each do |carro| %>
+        <div class="card">
+          <h2 class="card-title"><%= carro.nome %></h2>
+	  <% if local_assigns[:edit_allowed] == false %>
+	    <h3 class="card-info">CRV: <%= carro.crv %></h3>
+	    <h3 class="card-info">Marca: <%= carro.marca %></h3>
+	    <h3 class="card-info">RG da Pessoa: <%= carro.pessoa.rg %></h3>
+	  <% end %>
+	  
+          <% if local_assigns[:edit_allowed] != false %>
+            <p>
+              <%= link_to "Mostrar Carro", carro %>
+            </p>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <% if local_assigns[:edit_allowed] != false %>
+      <%= link_to "Novo Carro", new_carro_path, class: "new-link" %>
+      <br>
+    <% end %>
+    
+    <%= link_to "Voltar", root_path, class: "back-link" %>
+  </div>
+</body>
+</html>
+

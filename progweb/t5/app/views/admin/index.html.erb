@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      width: 200px;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #6c757d;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .back-link:hover {
+      background-color: #5a6268;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2><%= link_to 'Pessoas', pessoas_path %></h2>
+    </div>
+    <div class="card">
+      <h2><%= link_to 'Carros', carros_path %></h2>
+    </div>
+    <div class="card">
+      <h2><%= link_to 'Computadores', computadors_path %></h2>
+    </div>
+    <div class="card">
+      <h2><%= link_to 'Disciplinas', disciplinas_path %></h2>
+    </div>
+    <div class="card">
+      <h2><%= link_to 'Disciplinas Pessoas', disciplinas_pessoas_path %></h2>
+    </div>
+    
+    <br>
+    <%= link_to "Voltar", root_path, class: "back-link" %>
+  </div>
+</body>
+</html>
+
