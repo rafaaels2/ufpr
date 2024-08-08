@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
+  <title>Trabalho 5</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -24,7 +25,7 @@
       background-color: #fff;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       margin: 10px;
-      width: 300px;
+      width: 200px;
       display: inline-block;
       vertical-align: top;
     }
@@ -43,40 +44,15 @@
     .card a:hover {
       text-decoration: underline;
     }
-
-    .action-links {
-      margin-top: 20px;
-    }
-
-    .action-links a {
-      display: inline-block;
-      margin: 10px;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      background-color: #007bff;
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .action-links a:hover {
-      background-color: #0056b3;
-    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Editando Pessoa</h1>
-
     <div class="card">
-      <%= render "form", pessoa: @pessoa %>
+      <h2><%= link_to 'Logar como Admin', admin_path %></h2>
     </div>
-
-    <div class="action-links">
-      <%= link_to "Mostar Pessoa", @pessoa, class: "card" %> 
-      <%= link_to "Volta para Pessoas", pessoas_path, class: "action-links" %>
+    <div class="card">
+      <h2><%= link_to 'Logar como Usuário', user_path %></h2>
     </div>
   </div>
 </body>

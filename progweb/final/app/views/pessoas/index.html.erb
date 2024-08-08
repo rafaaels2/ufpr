@@ -1,14 +1,92 @@
-<p style="color: green"><%= notice %></p>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-<h1>Pessoas</h1>
+    .container {
+      text-align: center;
+    }
 
-<div id="pessoas">
-  <% @pessoas.each do |pessoa| %>
-    <%= render pessoa %>
-    <p>
-      <%= link_to "Show this pessoa", pessoa %>
-    </p>
-  <% end %>
-</div>
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      width: 200px;
+      display: inline-block;
+      vertical-align: top;
+    }
 
-<%= link_to "New pessoa", new_pessoa_path %>
+    .card h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+
+    .notice {
+      color: green;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .new-link {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .new-link:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p class="notice"><%= notice %></p>
+
+    <h1>Pessoas</h1>
+
+    <div id="pessoas">
+      <% @pessoas.each do |pessoa| %>
+        <div class="card">
+          <h2><%= pessoa.nome %></h2>
+          <p>
+            <%= link_to "Mostar Pessoa", pessoa %>
+          </p>
+        </div>
+      <% end %>
+    </div>
+
+    <%= link_to "Criar Pessoa", new_pessoa_path, class: "new-link" %>
+  </div>
+</body>
+</html>
+
