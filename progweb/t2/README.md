@@ -1,3 +1,7 @@
+## Relacionamento entre Tabelas
+
+Este trabalho tem como objetivo aplicar os conhecimentos adquiridos em Ruby por meio da criação de tabelas e do estabelecimento de relacionamentos entre elas.
+
 ### TABELAS
 * pessoas
   * | RG | NOME | IDADE | CIDADE |
@@ -47,3 +51,13 @@ pessoas n: n disciplinas<br>
   * COMO USAR: ```$ remove```
 ---
 **IMPORTANTE**: não é necessário inicializar as tabelas, pois os registros iniciais ja foram realizados.
+
+## Tecnologias Utilizadas
+<div style="display: inline_block">
+  <img align="center" alt="react-native" src="https://img.shields.io/badge/Ruby-CC342D?style=for-the-badge&logo=ruby&logoColor=white"/>
+  <img align="center" alt="react-native" src="https://img.shields.io/badge/Shell_Script-121011?style=for-the-badge&logo=gnu-bash&logoColor=white"/>
+</div>
+
+<br />
+
+🟩 **FINALIZADO**
