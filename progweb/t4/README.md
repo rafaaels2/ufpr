@@ -11,6 +11,6 @@ Este trabalho tem como objetivo de criar uma tabela de alunos fictícios abstrai
 
 <br />
 
-🟩 **NÃO FINALIZADO**
+🟩 **FINALIZADO**
  
 
