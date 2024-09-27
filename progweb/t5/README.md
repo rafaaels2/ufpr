@@ -1,24 +1,14 @@
-# README
+# Ruby on Rails
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Este trabalho busca aplicar os conhecimentos adquiridos em Ruby on Rails, recriando os relacionamentos desenvolvidos no Trabalho 2, mas agora utilizando uma interface web por meio do framework Rails.
 
-Things you may want to cover:
+## Tecnologias Utilizadas
+<div style="display: inline_block">
+  <img align="center" alt="react-native" src="https://img.shields.io/badge/Ruby_on_Rails-CC0000?style=for-the-badge&logo=ruby-on-rails&logoColor=white"/>
+</div>
 
-* Ruby version
+<br />
 
-* System dependencies
+🟩 **FINALIZADO**
+ 
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
