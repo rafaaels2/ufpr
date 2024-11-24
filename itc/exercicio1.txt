@@ -1,0 +1,22 @@
+COLA:
+
+Suponha que L seja regular. Então k > 0 a constante do lema do bombeamento. 
+Seja z = 0^k+1 1^k e L. |z| = 2k + 1
+|uv| <= k
+
+1. Suponha que L é regular. Então k > o a constante do lema do bombeamento. 
+Seja z = 0^k 1^k+1. |z| = 2k + 1
+
+se |uv| <= k, então uv é uma palavra que só contem 0's, se eu bombear v, temos 0^k+|v| 1^k+1, que para i >= 1 fará com que n <= m, violando a condição da linguagem.
+
+
+2. Suponha que L é regular. k > 0  a constante de bombeamento. Seja z = 0^k 1²^k. |z| = k + 2^k
+|uv| <= k, então uv é uma palavra que só contem 0's, além disso sabemos que v != lambida, logo v é no mínimo 0. se bombearmos a palavra com i = 0 teremos uv⁰w, removendo um 0 e desfazendo a condição quadŕatica.
+
+4. Suponha que L é regular. k > 0 a constante do lema do bombeamento.
+Seja z = 
+
+Q = {V, sigma, P, S)
+
+S -> A0A
+A -> 0A | 1A | 0 | 1

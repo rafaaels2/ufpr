@@ -1,0 +1,16 @@
+2. Construa uma gramatica livre de contexto para a seguinte linguagem sobre o alfabeto {0, 1}
+L = {w | |w| é impar e o símbolo do meio é um 0}
+
+S -> A0A
+A -> 0A | 1A | 0B | 1B
+B -> 0 | 1
+
+4. Construa automotos com pilha para as seguintes linguagens abaixo.
+a. L = {a^n b^m c²(n+m) | n>= 0, m >= 0}
+
+2. Use o lema do bombeamento para provar que a linguagem {www|w ∈ {a, b}∗} não é regular.
+
+suponha que L é regular. k > a constante do lema do bombeamento. Temos z = w^k w^k w^k. Então |z| = 3k >= k
+|uv| <= k, então podemos assurmi que uv = w tal que w seja apenas a primeira subtring w da palavra como um todo.
+Se bombearmos v, formaremos w^k+|v| w^k w^k o que viola a regra de que cada substring w deve conter o mesmo numero de simbolos.
+então z' não pertence a L

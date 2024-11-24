@@ -1,0 +1,43 @@
+2. LINGUAGENS
+  a. Se |Σ| = n então existem n^k palavras de tamanho k em Σ∗
+  b. Uma linguagem sobre um alfabeto Σ é um subconjunto de Σ∗
+  
+3. PRIMEIROS OPERADORES
+ex2.
+ 
+BASE: i = 0, então 
+  (w^r)^i -> (w^r)⁰ -> λ
+  (w^i)^r -> (w⁰)^r -> λ^r -> λ
+HIPÓTESE DE INDUÇÃO: 
+  suponhamos que (w^r)^i = (w^i)r para qualquer i > 0 e i <= n
+PASSO DA INDUÇÃO: 
+  seja i = n + 1, vamos provar que (w^r)^n+1 = (w^n+1)^r
+  (w^r)^n+1 = (w^r)^n * w^r
+  (w^r)^n+1 = (w^n)^r * w^r pela hipotese
+  (w^r)^n+1 = (w^n * w)^r pelo teorema
+  (w^r)^n+1 = (w^n+1)^r
+
+ex3.
+
+BASE: tamaho(w) = 0, logo w = λ
+  (w^r)^r -> (λ^r)^r -> λ
+HIPOTESE DE INDUÇÃO:
+  suponhamos que (w^r)^r = w para qualquer w ∈ Σ∗ tal que tamanho(w) > 0 e <= n
+PASSO DA INDUÇÃO:
+  seja w ∈ Σ∗ | tamanho(w) = n + 1, isto é w = va, v ∈ Σ∗ e a ∈ Σ
+  (w^r)^r = ((va)^r)^r
+  (w^r)^r = (v^r * a^r)^r teorema
+  (w^r)^r = (v^r)^r * (a^r)^r teorema
+  (w^r)^r = v * a hipotese
+  (w^r)^r = w
+  
+4. LINGUAGENS REGULARES 
+  a. Linguagem Formal, definida por recursão.
+  base é composta pelas menores palavras da lingugem
+
+5. EXPRESSOES REGULARES
+ex1. linguagem que possui uma qunatidade par de b's. 
+ex2.
+  (aa + ab + ba + bb)*
+  impossivel, pois não temos memoria
+  (a + b)bb* -> b∗(ab∗)∗
