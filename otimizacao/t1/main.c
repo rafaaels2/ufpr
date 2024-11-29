@@ -50,7 +50,7 @@ lp_solve_t *modela_problema (lp_solve_t *lp_solve, float *numeros) {
         valor = numeros[i + 2];
 
         for (int j = 0; j < numeros[1]; j++) 
-            custo += (numeros[(j * 2) + 2 + (int) numeros[0]]) * (numeros[j + (i * 4) + 2 + (int) numeros[0] + 2 * (int) numeros[1]]);
+            custo += (numeros[(j * 2) + 2 + (int) numeros[0]]) * (numeros[j + (i * (int) numeros[1]) + 2 + (int) numeros[0] + 2 * (int) numeros[1]]);
 
         lp_solve -> objetivo[xi++] = valor - custo;
     }
@@ -74,7 +74,7 @@ lp_solve_t *modela_problema (lp_solve_t *lp_solve, float *numeros) {
         ri = 0;
 
         for (int j = 0; j < numeros[0]; j++) {
-            lp_solve -> restricoes[i][ri++] = numeros[2 + (int) numeros[0] + (2 * (int) numeros[1]) + (j * 4) + (i * 1)];
+            lp_solve -> restricoes[i][ri++] = numeros[2 + (int) numeros[0] + (2 * (int) numeros[1]) + (j * (int) numeros[1]) + (i * 1)];
         }
         lp_solve -> restricoes[i][ri] = numeros[3 + (int) numeros[0] + (i * 2)];
     }
