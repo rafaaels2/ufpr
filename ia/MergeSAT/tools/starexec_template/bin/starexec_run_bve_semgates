@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Run mergesat with simplification, and emitting a proof.
+# The proof is written to the file in the directory specified in the second
+# argument, in a file called "proof.out".
+
+# call solver from the directory where this script is located
+SOLVERDIR="$(dirname "${BASH_SOURCE[0]}" )"
+
+TMPDIR=$2
+if [ -n "${DEFAULT_MERGESAT_TMPDIR:-}" ]
+then
+	TMPDIR=$(realpath "${DEFAULT_MERGESAT_TMPDIR:-}")
+fi
+
+# Use gate detection during BVE, as well as use unit propaation to find gates
+"$SOLVERDIR"/mergesat "$1" -cores=1 -verb=0 -bve-gates -bve-sem-gates -drup-file="$TMPDIR"/proof.out

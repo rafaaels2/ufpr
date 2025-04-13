@@ -1,0 +1,72 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [unreleased]
+
+ * add AWS docker infrastructure
+ * add gate detection for portfolio configurations
+
+## [4.0-rc3]
+
+ * BVE with syntactic gate detection
+ * BVE with semantic gate detection
+ * Use parallel solver as default
+ * Use parallel solver in incremental IPASIR solver
+ * Each thread runs its own simplification
+
+## [4.0-rc2]
+
+ * Use solver internal math code
+ * Activity: initialize by variable order
+ * Use necessary assignment reasoning every 4th level 0 decision
+ * print 20 variables per model line
+
+## [3.3.1]
+
+ * testing: extend incremental interface tests
+ * GC allow to relocate based on assignment order
+ * LA: implement one-sided double look-ahead
+
+## [3.3.0]
+
+ * pow: implement internal method
+ * ci: check determinisms
+ * parallel: support all sequential entry point features, and make it default
+
+## [v3.2.4] - 2022-02-28
+
+ * implement detecting necessary assignments
+ * implement all-strengthening
+ * implement on-the-fly self-subsumption
+ * generalized variant of learning all UIP clauses
+ * implement AllUIP minimization by Feng and Bacchus
+ * include lookahead as decision heuristic
+ * improve documentation
+
+## [v3.2.3] - 2022-01-16
+
+ * parallel: support proof generation
+ * testing: use modgen generator during fuzzing runs
+ * fix FPU control to compile on ARM
+
+## [v3.2.1] - 2021-12-20
+
+ * interface: implement CaDiCaL's C interface, and test similar behavior
+ * interface: provide cmergesat.h C interface
+ * simp: support freezing a variable multiple times
+
+## [v3.2.1] - 2021-12-29
+
+ * parallel: introduce Semaphore class, to compile on Mac
+
+## [v3.2.0] - 2021-12-20
+
+ * version: use full semantic versioning
+ * parallel: fix solving with uniform configuration in all solvers
+ * parallel: fixing not using simplification for parallel solvers
+
+## [v3.1] - 2021-11-27

@@ -1,0 +1,204 @@
+\documentclass[conference]{IEEEtran}
+% packages
+\usepackage{xspace}
+\usepackage{hyperref}
+\usepackage{todonotes}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+
+\def\CC{{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}}}
+\def\ea{\,et\,al.\ }
+
+\begin{document}
+	
+% paper title
+\title{MergeSat, Merge-Mallob and Mallob-MergeCadLing} % , Merge-HordeSAT
+
+% author names and affiliations
+% use a multiple column layout for up to three different
+% affiliations
+\author{
+\IEEEauthorblockN{Norbert Manthey}
+\IEEEauthorblockA{nmanthey@conp-solutions.com\\Dresden, Germany}
+}
+
+\maketitle
+
+\def\coprocessor{\textsc{Coprocessor}\xspace}
+\def\glucose{\textsc{Glucose~2.2}\xspace}
+\def\minisat{\textsc{Minisat~2.2}\xspace}
+\def\riss{\textsc{Riss}\xspace}
+\def\mergesat{\textsc{MergeSAT}\xspace}
+\def\hordesat{\textsc{HordeSat}\xspace}
+\def\mergehordesat{\textsc{Merge-HordeSat}\xspace}
+\def\mergemallob{\textsc{Merge-Mallob}\xspace}
+\def\mallob{\textsc{Mallob}\xspace}
+\def\cadical{\textsc{CaDiCaL}\xspace}
+\def\lingeling{\textsc{lingeling}\xspace}
+\def\yalsat{\textsc{Yalsat}\xspace}
+\def\kissat{\textsc{Kissat}\xspace}
+
+% the abstract is optional
+\begin{abstract}
+The sequential SAT solver \mergesat is a fork of the 2018 SAT competition winner, and adds known as well as novel improvements.
+\mergesat is setup to simplify merging solver contributions into one solver, to motivate more collaboration among solver developers.
+\mergesat has been integrated into the parallel \hordesat, which in turn is used in \mallob.
+Additionally, \mergesat offers a deterministic parallel mode, with the ability to generate unsatisfiability proofs.
+\end{abstract}
+
+
+\section{Introduction}
+
+The CDCL solver \mergesat is based on the competition winner of 2018, \textsc{Maple\_LCM\_Dist\_ChronoBT}~\cite{MapleLCMDistChronoBT}, and adds several known techniques, fixes, and some novel ideas around reasoning as well as parallel solving.
+\mergesat uses git to combine changes, and comes with continuous integration to simplify extending the solver further.
+
+\section{Development Tenets}
+
+% CDCL
+When given a sequential compute resource, the CDCL algorithm~\cite{Marques-Silva:1996} is assumed to be the most efficient way to solve SAT.
+To avoid duplicating implementation effort, \mergesat is setup to easily incorporate modifications to other solvers.
+This setup allows to keep up with the state-of-the-art and research.
+Automated testing as well as extended internal checks and proof validation help to spot merge issues early.
+
+% parallel
+For parallel computing resources, portfolio solvers are assumed to be limited with respect to scalability in proof generation~\cite{resolution-barriers}. \mergesat's parallel variant allows to use search space partitioning in an experimental mode. 
+Partitioning is currently handled via assumption literals, similarly to the \emph{cube-and-conquer}~\cite{cubeNconquer} approach.
+The key difference is that \mergesat dynamically and recursively re-partitions the search space again if compute resources become available again~\cite{HyvarinenJN:2006,Miterative-splitting}.
+The heuristic is to keep the sequential algorithm running as long as possible on the largest possible portion of the search space.
+Thanks to using assumption literals, the used base-solver does not need to implement \emph{dependency-tracking}~\cite{LantiM:2013}, as done in \textsc{Pcasso}~\cite{pcasso2014}.
+Learnt clauses can be shared across all solver instances, and unsatisfiability proofs can be generated as done in parallel portfolio solvers~\cite{HeuleMP:2014}.
+% 
+% To not decrease the performance of the solver beyond the parallelism slowdown, the default configuration of \mergesat is executed in parallel.
+
+% no tuning nor application
+\mergesat is not tuned for a specific application or benchmark.
+Solver additions try to stay as close to the original behavior as possible, and can be enabled by configuration.
+Behavior-changing modifications are automatically detected.
+
+% library tuning
+Most algorithms in \mergesat can be configured.
+The parameter specification can be printed to a file, to be used by tools to automatically configure the solver.
+Furthermore, when using \mergesat as a library, the parameters can be configured -- and tuned -- via environment variables.
+
+% deterministic, cross platform
+To improve solver maintenance, the solver is implemented in a deterministic way.
+Algorithms are limited or switched based on step counters instead of measured run time, as the later is highly platform specific.
+The parallel execution is based on \emph{barriers} similar to \textsc{ManySat}~\cite{HamadiJ:2009}, to obtain a deterministic parallel solver execution.
+Cross-platform determinism is work in progress: \mergesat already replaces some of the math-library functions like \emph{exp}, to become independent of the implementation differences for different platforms.
+
+% reasoning beyond plain resolution
+While CDCL, as well as variable elimination~\cite{EenB:2005}, use resolution as the main reasoning, other simplification techniques exist that do not follow the obvious resolution pattern.
+\emph{Learnt Clause Minimization}~\cite{ijcai2017-98} is such an example.
+Similarly, \mergesat implements \emph{look-ahead}~\cite{DBLP:series/faia/HeuleM09}, which can be used to create search decisions, as well as to partition the formula.
+The implemented look-ahead uses double-look ahead for the second assessed polarity, as ternary clauses are collected after propagating the first polarity.
+
+% proof generation
+The sequential and parallel \mergesat can emit unsatisfiability proofs in the \emph{DRAT} format~\cite{drat}.
+In both modes, the generation of the proof can be verified during runtime.
+
+The sequential solver supports incremental solving with assumption literals.
+Incremental solving is not yet compatible with the search space partitioning, so that the
+parallel solver falls back to portfolio mode with sharing.
+% TODO: might add incremental for parallel, once that is working
+
+\section{Improvements Since Competition 2021 Version}
+
+Besides the extension to deterministic parallel solving with clause sharing, proof generation and search space partitioning, \mergesat received some updates in the used heuristics.
+
+The solver \cadical initially assigns the free variables in order. \mergesat assigned the smallest free variable first, and the greatest variable next; and then continue in reverse order -- as also done in \minisat or \glucose.
+This order is caused by the initialization of variable activities to the same value, in
+combination with the implementation of the used ordering data structure.
+To stay in order, the activities of the variables are not assigned the same value, but instead are assigned the value $\frac{1000}{x}$ for each variable x.
+
+% necessary assignment every X (beyond other techniques that have been added
+To get access beyond the usual search and conflict analysis with learnt clause minimization, \emph{necessary assignments}~\cite{probing} based on the literals of binary clauses can be detected during decisions on the top level. Heuristically, this search happens for every fourth decision on the top-level.
+
+Changes to the solver are tracked in a \emph{CHANGELOG} file.
+Updates to this file are enforced via automated checks.
+
+\section{Submitted Solvers}
+
+% flto, THP in glibc+fedora 36 -- used in all submitted solvers, sequential via static linking, parallel via using fedora 36 in docker image
+
+% We submit the sequential solver as a parallel solver to the competition.
+
+\subsection{Sequential Solvers}
+
+\mergesat is submitted in three different configurations.
+
+\subsubsection{Default Configuration (4.0-rc1)}
+
+This configuration uses the setup as described above.
+
+\subsubsection{No Platform (4.0-rc2)}
+
+This configuration differs to (4.0-rc1) in the fact that the systems math library implementation is used for the functions \emph{exp} and \emph{log}.
+
+\subsubsection{No SLS (4.0-rc3)}
+
+This configuration differs to (4.0-rc1) in the fact that the \textsc{CCnr} SLS engine is not used during search. However, \emph{rephasing}~\cite{kissat} is still used.
+
+\subsection{Parallel Solvers}
+
+The more recent variant of \mergesat has been submitted in a stand-alone fashion as determinism portfolio solver with sharing.
+Furthermore, variants of \hordesat and \mallob have been submitted, using improvements from \mergesat, as well as more recent solvers that also use insights from \mergesat.
+
+The docker image used for the parallel \mergesat is based on Fedora 36.
+This version already uses glibc 2.35, which contains the modifications to memory allocation to easily use huge page memory management, which has been shown to improve solver performance~\cite{thp}.
+Furthermore, prefetching is disabled in the solver backends for parallel solvers.
+% The deterministic portfolio variant of \mergesat is submitted as parallel solver.
+
+% \subsubsection{MergeSat}
+% 
+% The parallel variant of \mergesat is submitted to the parallel track.
+% The number of compute resources to be used is set to the half of the available resources.
+% Prefetching is not used in the parallel mode, to not overload load the memory subsystem with avoidable memory accesses.
+
+% \subsubsection{Merge-HordeSat}
+% 
+% For the parallel track, the solver \mergehordesat uses the 4.0 release candidate variant of \mergesat.
+% Next to the version bump, also more different versions of \mergesat are used in this solver.
+
+\subsubsection{Merge-Mallob}
+
+For the cloud-track, the solver \mallob, which is based on \hordesat, has been extended to use the latest variant of \mergesat.
+In this configuration, \mergesat is the only used solving engine.
+
+\subsubsection{Mallob-MergeCadLing}
+
+All other backend solvers (\cadical, \lingeling, \yalsat) have been bumped to their most recent version.
+To simplify future updates, these solvers are added via git submodules.
+Prefetching is not used in the parallel mode, to not overload load the memory subsystem with avoidable memory accesses.
+% 
+The used \cadical backend furthermore received the \emph{watch-sat} modification from the hack-track of the SAT competition 2021.
+
+\section{Availability}
+
+The source of \mergesat is publicly available under the MIT license at \url{https://github.com/conp-solutions/mergesat}.
+The version with the git tag ``sat-comp-2022'' is used for all \mergesat-related submissions.
+% TODO: update used tags (release candidates)
+The submitted starexec package can be reproduced by running ``./scripts/make-starexec.sh'' on this commit.
+
+\mergehordesat is available under the MIT license at \url{https://github.com/conp-solutions/hordesat}.
+% , with the tag ``sat-comp-2022''.
+\mergemallob is available under the LGPL license at \url{https://github.com/conp-solutions/mallob}, with the tag ``sat-comp-2022''.
+%  TODO: add other repositories and links to them as well!
+The variant of the parallel and cloud track solvers can be found in the repository \url{https://github.com/conp-solutions/aws-competition-solver}, with the tags
+% TODO could turn this into links as well!
+Mallob-MergeCadLing-sat-comp-2022,
+Merge-Mallob-sat-comp-2022, and
+MergeSat-parallelsat-comp-2022, respectively.
+
+The parallel variant of \mergesat has a few open issues: tuning the default configuration, improving handling of special cases like lazily initializing and synchronizing parallel solvers during incremental solving, as well as combining incremental solving with search space partitioning and proof generation.
+
+\section*{Acknowledgment}
+
+The author would like to thank the developers of all predecessors of \mergesat, and all the authors who contributed the modifications that have been integrated.
+Furthermore, we thank the ZIH of TU Dresden for making compute resources available that have been used to develop earlier versions of \mergesat.
+Adhemerval Zanella made transparent huge pages easily accessible via his modifications to glibc.
+Also, Mike Whalen from AWS helped to setup the parallel and cloud solvers to be executable in the AWS environment.
+
+\bibliographystyle{IEEEtranS}
+\bibliography{local}
+
+\end{document}

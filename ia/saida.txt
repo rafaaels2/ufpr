@@ -1,0 +1,2 @@
+c MergeSAT - Norbert Manthey, 2023.
+s UNSATISFIABLE
