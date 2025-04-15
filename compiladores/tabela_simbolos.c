@@ -22,3 +22,5 @@ struct simbolo *novo_simbolo (char *nome, tipo_e tipo, tipo_simb_e tipo_simb, in
 
     return novo;
 }
+
+

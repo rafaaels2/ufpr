@@ -4,17 +4,136 @@
 #include "tabela_simbolos.h" 
 #include "compilador.h"
 
-int yylex();
+int  yylex();
+void yyerror(const char *s);
 
 struct tabela_simbolos *tab_simbolos = NULL;
 %}
 
+%union {
+    char *lexema;
+}
+
+%token <lexema>NUM
+%token <lexema>ID
+
+%token <lexema>OPERADOR_MULTIPLICATIVO
+%token MAIS, MENOS
+
+%token BEGIN_TOKEN, END, VAR, FUNCTION, PROCEDURE, PROGRAM
+
+%token INTEIRO, REAL
+
+%token ABRE_PARENTESES, FECHA_PARENTESES
+
+%token OPERADOR_ATRIBUICAO
+
+%token <lexema>OPERADOR_RELACIONAL
+
+%token OR
+
+%token VIRGULA, PONTO_VIRGULA, DOIS_PONTOS, PONTO_FINAL
+
+%token IF, THEN, ELSE, WHILE, DO
+
+%left '+' '-'
+%left '*' '/'
+
 %%
 
-PROGRAMA:
-    /* Vazio */ { tabela_init (&tab_simbolos); printf ("Tabela inicializada!\n"); }
+PROGRAMA: PROGRAM ID ABRE_PARENTESES LISTA_DE_IDENTIFICADORES FECHA_PARENTESES PONTO_VIRGULA
+        DECLARACOES 
+        DECLARACOES_DE_SUBPROGRAMAS 
+        ENUNCIADO_COMPOSTO 
+        PONTO_FINAL
+        ;
+
+LISTA_DE_IDENTIFICADORES: ID 
+                        | LISTA_DE_IDENTIFICADORES VIRGULA ID 
+                        ;
+
+DECLARACOES: DECLARACOES VAR LISTA_DE_IDENTIFICADORES DOIS_PONTOS TIPO PONTO_VIRGULA 
+           | /* empty */ 
+           ;
+
+TIPO: INTEIRO
+    | REAL 
     ;
 
+DECLARACOES_DE_SUBPROGRAMAS: DECLARACOES_DE_SUBPROGRAMAS DECLARACAO_DE_SUBPROGRAMA PONTO_VIRGULA
+                           | /* empty */
+                           ;
+
+DECLARACAO_DE_SUBPROGRAMA: CABECALHO_DE_SUBPROGRAMA DECLARACOES ENUNCIADO_COMPOSTO 
+                         ;
+
+CABECALHO_DE_SUBPROGRAMA: FUNCTION ID ARGUMENTOS DOIS_PONTOS TIPO PONTO_VIRGULA 
+                        | PROCEDURE ID ARGUMENTOS PONTO_VIRGULA 
+                        ;
+
+ARGUMENTOS: ABRE_PARENTESES LISTA_DE_PARAMETROS FECHA_PARENTESES
+          | /* empty */
+          ;
+
+LISTA_DE_PARAMETROS: LISTA_DE_IDENTIFICADORES DOIS_PONTOS TIPO 
+                   | VAR LISTA_DE_IDENTIFICADORES DOIS_PONTOS TIPO 
+                   | LISTA_DE_PARAMETROS PONTO_VIRGULA LISTA_DE_IDENTIFICADORES DOIS_PONTOS TIPO 
+                   | LISTA_DE_PARAMETROS PONTO_VIRGULA VAR LISTA_DE_IDENTIFICADORES DOIS_PONTOS TIPO 
+                   ;
+
+ENUNCIADO_COMPOSTO: BEGIN_TOKEN ENUNCIADOS_OPCIONAIS END
+                  ;
+
+ENUNCIADOS_OPCIONAIS: LISTA_DE_ENUNCIADOS
+                    | /* empty */
+                    ;
+
+LISTA_DE_ENUNCIADOS: ENUNCIADO
+                   | LISTA_DE_ENUNCIADOS PONTO_VIRGULA ENUNCIADO
+                   ;
+
+ENUNCIADO: VARIAVEL OPERADOR_ATRIBUICAO EXPRESSAO
+         | CHAMADA_DE_PROCEDIMENTO
+         | ENUNCIADO_COMPOSTO
+         | IF EXPRESSAO THEN ENUNCIADO ELSE ENUNCIADO
+         | WHILE EXPRESSAO DO ENUNCIADO 
+         ;
+
+VARIAVEL: ID 
+        ;
+
+CHAMADA_DE_PROCEDIMENTO: ID
+                       | ID ABRE_PARENTESES LISTA_DE_EXPRESSOES FECHA_PARENTESES
+                       ;
+
+LISTA_DE_EXPRESSOES: EXPRESSAO
+                   | LISTA_DE_EXPRESSOES VIRGULA EXPRESSAO
+                   ;
+
+EXPRESSAO: EXPRESSAO_SIMPLES
+         | EXPRESSAO_SIMPLES OPERADOR_RELACIONAL EXPRESSAO_SIMPLES
+         ;
+
+EXPRESSAO_SIMPLES: TERMO
+                 | SINAL TERMO  
+                 | EXPRESSAO_SIMPLES MAIS EXPRESSAO_SIMPLES 
+                 | EXPRESSAO_SIMPLES MENOS EXPRESSAO_SIMPLES 
+                 | EXPRESSAO_SIMPLES OR EXPRESSAO_SIMPLES 
+                 ;
+
+TERMO: FATOR
+     | TERMO OPERADOR_MULTIPLICATIVO FATOR
+     ;
+
+FATOR: ID    
+     | ID ABRE_PARENTESES LISTA_DE_EXPRESSOES FECHA_PARENTESES   
+     | NUM    
+     | ABRE_PARENTESES EXPRESSAO FECHA_PARENTESES 
+     ;
+
+SINAL: MAIS    
+     | MENOS    
+     ;
 %%
 
 int main() {
@@ -27,5 +146,4 @@ int yyerror(const char *s) {
   fprintf (stderr, "Erro na linha: %s\n",s);
 
   exit (1);
-  //return 0;
 }
